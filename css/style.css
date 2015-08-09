@@ -1,0 +1,21 @@
+.map-container{
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+}
+.map-container .map-canvas{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+	padding: 1em;
+}
+.map-container .map-canvas{
+    background-color: #ccc;
+}
