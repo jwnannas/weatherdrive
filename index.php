@@ -22,10 +22,20 @@
 </head>
 <body>
 	<header><h1>WeatherDrive Header</h1></header>
-	<p  class="lead">INFO PANE</p>
-	<div class="map-container">
-		<div id="map-canvas" class="map-canvas"></div>
+	<div class="navbar">Navigation</div>
+	<div id="actionPanel">
+		<div id="actionRow" class="row">
+			<div id="infoPane" class="col-md-2">
+				<p  class="lead">INFO PANE</p>
+			</div>
+			<div id="mapColumn" class="col-md-10">
+				<div class="map-container">
+					<div id="map-canvas" class="map-canvas"></div>
+				</div>
+			</div>
+		</div>
 	</div>
+	<footer> WeatherDrive Footer</footer>
 </body>
 </html>
 
