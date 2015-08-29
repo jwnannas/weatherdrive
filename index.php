@@ -8,24 +8,21 @@
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4">
     </script>
-    <script type="text/javascript">
-    	function initialize() {
-        	var mapOptions = {
-          		center: { lat: 42.37469, lng: -71.12085},
-          		zoom: 12
-        	};
-        	var map = new google.maps.Map(document.getElementById('map-canvas'),
-            	mapOptions);
-      	}
-     	google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
 </head>
 <body>
 	<header><h1>WeatherDrive Header</h1></header>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
 			<div id="infoPane" class="col-md-3">
-				<p  class="lead">INFO PANE</p>
+				<form id="searchRow" class="row">
+					<label for="origin">Origin</label>
+					<input type="text" name="origin" id="origin" class="form-control">
+					<label for="destination">Destination</label>
+					<input type="text" name="destination" id="destination" class="form-control">
+					<br>
+					<button type="button" id="search" class="btn btn-default">Search</button>
+				</form>
+				<div id="directions" class="row"></div>			
 			</div>
 			<div id="mapColumn" class="col-md-9">
 				<div class="map-container">
@@ -34,6 +31,6 @@
 			</div>
 		</div>
 	</div>
+ <script src="js/mapScript.js" type="text/javascript"></script>
 </body>
 </html>
-

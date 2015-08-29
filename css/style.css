@@ -42,7 +42,30 @@ h1 {
 }
 
 #infoPane {
-	background-color: black;
 	height: 100%;
 	padding: 0;
+}
+
+#searchRow {
+	height: 25%;
+	width: 100%;
+}
+
+#search {
+	width: 100%
+}
+
+#directions {
+	height: 75%;
+	width: 100%;
+	margin: 0;
+	overflow: auto;
+}
+
+form {
+	width: 100%;
+}
+
+.row {
+	margin: 0;
 }
