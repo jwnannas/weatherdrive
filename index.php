@@ -10,20 +10,34 @@
     </script>
 </head>
 <body>
-	<header><h1>WeatherDrive Header</h1></header>
+	<header><h1>WeatherDrive</h1></header>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
 			<div id="infoPane" class="col-md-3">
-				<form id="searchRow" class="row">
-					<label for="origin">Origin</label>
-					<input type="text" name="origin" id="origin" class="form-control">
-					<label for="destination">Destination</label>
-					<input type="text" name="destination" id="destination" class="form-control">
-					<br>
-					<button type="button" id="search" class="btn btn-default">Search</button>
-				</form>
-				<div id="directions" class="row"></div>			
-			</div>
+				<table>
+					<thead>
+						<tr>
+							<td>
+								<form>
+									<label for="origin">Origin</label>
+									<input type="text" name="origin" id="origin" class="form-control">
+									<label for="destination">Destination</label>
+									<input type="text" name="destination" id="destination" class="form-control">
+									<br>
+									<button type="button" id="search" class="btn btn-default">Search</button>
+								</form>
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<div id="directions"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>		
 			<div id="mapColumn" class="col-md-9">
 				<div class="map-container">
 					<div id="map-canvas" class="map-canvas"></div>

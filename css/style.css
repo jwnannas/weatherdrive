@@ -46,26 +46,19 @@ h1 {
 	padding: 0;
 }
 
-#searchRow {
-	height: 25%;
-	width: 100%;
-}
-
 #search {
 	width: 100%
 }
 
-#directions {
-	height: 75%;
-	width: 100%;
-	margin: 0;
+table {
+	display: block;
+	height: 100%;
 	overflow: auto;
-}
-
-form {
 	width: 100%;
+	margin-bottom: 0;
+	border-collapse: collapse;
 }
 
-.row {
-	margin: 0;
+thead, thead tr, thead tr td{
+	display: block;
 }

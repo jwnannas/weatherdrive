@@ -28,7 +28,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     destination: document.getElementById('destination').value,
     travelMode: google.maps.TravelMode.DRIVING
   }, function(response, status) {
-  	console.log(response);
     if (status === google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
     } else {
