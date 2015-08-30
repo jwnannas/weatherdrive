@@ -29,12 +29,53 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     travelMode: google.maps.TravelMode.DRIVING
   }, function(response, status) {
     if (status === google.maps.DirectionsStatus.OK) {
+      displayWeather(response);
       directionsDisplay.setDirections(response);
     } else {
       window.alert('Directions request failed due to ' + status);
     }
   });
+
+  /*display the weather on the map*/
+  function displayWeather(response) {
+    var directions = response.routes[0].legs[0];
+    var timeStep = stepTime(25, directions);
+    var locationStep = stepLocation(25, directions);
+    getWeather(locationStep, timeStep);
+
+  }
+
+  /*return the time taken to reach specified step 
+  in the directions object for this search*/
+  function stepTime(step, directions) {
+    var stepTime = 0;
+    for (i = 0; i <= step; i++) {
+      stepTime += directions.steps[i].duration.value;
+    }
+    return stepTime;
+  }
+
+  /*return the location of the specified step
+  in the directions object for this search*/
+  function stepLocation (step, directions) {
+    var stepLocation = directions.steps[step]["end_location"].G + ", " + directions.steps[step]["end_location"].K;
+    return stepLocation;
+  }
+
+  /*return the predicted weather for the specified location and time */
+  function getWeather (location, time) {
+    var predictionTime = (Date.now() / 1000 | 0) + time;
+    var weatherAPICall = "https://api.forecast.io/forecast/d0b0ba7f5bd34dbacdc9e469a3487298/" + location + ", " + predictionTime;
+    console.log(weatherAPICall);
+
+  }
 }
+
+/*Add Google Places autocomplete functionality to search boxes*/
+var autocompleteOrigin = new google.maps.places.Autocomplete(
+document.getElementById('origin'));
+var autocompleteDestination = new google.maps.places.Autocomplete(
+document.getElementById('destination'));
 
 /*add the map to the page*/
 google.maps.event.addDomListener(window, 'load', initialize);
