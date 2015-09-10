@@ -58,15 +58,27 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   /*return the location of the specified step
   in the directions object for this search*/
   function stepLocation (step, directions) {
-    var stepLocation = directions.steps[step]["end_location"].G + ", " + directions.steps[step]["end_location"].K;
+    var stepLocation = directions.steps[step]["end_location"].G + "," + directions.steps[step]["end_location"].K;
     return stepLocation;
   }
 
   /*return the predicted weather for the specified location and time */
   function getWeather (location, time) {
     var predictionTime = (Date.now() / 1000 | 0) + time;
-    var weatherAPICall = "https://api.forecast.io/forecast/d0b0ba7f5bd34dbacdc9e469a3487298/" + location + ", " + predictionTime;
-    console.log(weatherAPICall);
+    var weatherAPICall = "https://api.forecast.io/forecast/d0b0ba7f5bd34dbacdc9e469a3487298/" + location + "," + predictionTime;
+    $.ajax({
+      type: "POST",
+      url:"weather.php",
+      data: {link: weatherAPICall},
+      success: function(data) {
+        var weather = data;
+        plotWeather(weather);
+      }
+    });
+
+  function plotWeather(array) {
+    console.log(array);
+  }
 
   }
 }
