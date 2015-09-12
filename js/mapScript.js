@@ -29,47 +29,86 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     travelMode: google.maps.TravelMode.DRIVING
   }, function(response, status) {
     if (status === google.maps.DirectionsStatus.OK) {
-      displayWeather(response);
+      var numWeatherPoints = 5;//Preset now but will pull from search when built
+      buildDirectionsArray(response, numWeatherPoints, document.getElementById('origin').value);
       directionsDisplay.setDirections(response);
     } else {
       window.alert('Directions request failed due to ' + status);
     }
   });
 
-  /*display the weather on the map*/
-  function displayWeather(response) {
+  /*parse the directions to build an array of API weather requests*/
+  function buildDirectionsArray(response, numWeatherPoints, origin){
+  	var weatherRequests = [];
     var directions = response.routes[0].legs[0];
-    var timeStep = stepTime(25, directions);
-    var locationStep = stepLocation(25, directions);
-    getWeather(locationStep, timeStep);
-
+    var distance = directions.distance["value"];
+    startLocation = directions["start_location"].G+","+directions["start_location"].K;
+    endLocation = directions["end_location"].G+","+directions["end_location"].K;
+    weatherRequests[0] = getWeatherURL(startLocation, 0);
+    for (i = 1; i <= numWeatherPoints - 2; i++) { //"-2" to account for begin/end points
+    	searchDistance = distance*(i/(numWeatherPoints-1));    	
+    	locationPoint = getLocationPoint(searchDistance, directions);
+    	locationTime = getLocationTime(locationPoint.activeLocation, origin, weatherRequests, i);//need to pass array and loop iteration because timing function is asynchronous
+    }
+    weatherRequests[numWeatherPoints-1] = getWeatherURL(endLocation, directions["duration"].value);
+	console.log(weatherRequests);
+  }
+  
+  /*find the geolocation associated with a given distance along the route and return the step associated
+    with with that geolocation*/
+  function getLocationPoint (searchDistance, directions) {
+  	var activeStep = 0;
+  	var cumulativeDistance = 0;
+  	var locationArray = [];
+  	for (j = 0; cumulativeDistance <= searchDistance; j++) {
+  		string = directions.steps[j]["polyline"].points;
+  		polyline = google.maps.geometry.encoding.decodePath(string);
+  		for (k = 1; k <= polyline.length-1; k++) {
+  		if (cumulativeDistance <= searchDistance) {
+  			locationArray[0] = polyline[k-1];
+  			locationArray[1] = polyline[k];
+  			currentDistance = google.maps.geometry.spherical.computeLength(locationArray);
+			cumulativeDistance += currentDistance;
+			activeLocation = polyline[k].G+","+polyline[k].K;
+  		}
+  		activeStep = j;
+  		}
+    }
+    return {activeLocation, activeStep};
   }
 
   /*return the time taken to reach specified step 
   in the directions object for this search*/
-  function stepTime(step, directions) {
-    var stepTime = 0;
-    for (i = 0; i <= step; i++) {
-      stepTime += directions.steps[i].duration.value;
+  function getLocationTime(location, origin, array, i) {
+  	var pointDirectionsService = new google.maps.DirectionsService;
+  	pointDirectionsService.route({
+  		origin: origin,
+    	destination: location,
+    	travelMode: google.maps.TravelMode.DRIVING
+    }, function(pointResponse, status) {
+    if (status === google.maps.DirectionsStatus.OK) {
+    	locationTime = pointResponse.routes[0].legs[0]["duration"].value;
+    	console.log(i);
+    	array[i] = getWeatherURL(location, locationTime);
+    } else {
+      window.alert('Directions request failed due to ' + status);
     }
-    return stepTime;
+  });
   }
 
-  /*return the location of the specified step
-  in the directions object for this search*/
-  function stepLocation (step, directions) {
-    var stepLocation = directions.steps[step]["end_location"].G + "," + directions.steps[step]["end_location"].K;
-    return stepLocation;
-  }
-
-  /*return the predicted weather for the specified location and time */
-  function getWeather (location, time) {
-    var predictionTime = (Date.now() / 1000 | 0) + time;
+  /*build an API url to call weather for a specific point*/
+  function getWeatherURL (location, time) {
+  	var predictionTime = (Date.now() / 1000 | 0) + time;
     var weatherAPICall = "https://api.forecast.io/forecast/d0b0ba7f5bd34dbacdc9e469a3487298/" + location + "," + predictionTime;
+  	return weatherAPICall;
+  }
+  
+  /*return the predicted weather for the specified location and time */
+  function getWeather (url) {
     $.ajax({
       type: "POST",
       url:"weather.php",
-      data: {link: weatherAPICall},
+      data: {link: url},
       success: function(data) {
         var weather = data;
         plotWeather(weather);
