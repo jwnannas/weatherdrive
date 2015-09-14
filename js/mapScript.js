@@ -13,13 +13,12 @@ function initialize() {
         };
     var map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-  
+   directionsDisplay.setMap(map);
   /*add event listener to search to display directions when destinations are entered*/
   var onClick = function() {
       calculateAndDisplayRoute(directionsService, directionsDisplay, map);
     };
   document.getElementById('search').addEventListener('click', onClick);
-  directionsDisplay.setMap(map);
   directionsDisplay.setPanel(document.getElementById('directions'));
 }
 
@@ -75,7 +74,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, map) {
       activeStep = j;
       }
     }
-    return {activeLocation, activeStep};
+    return {activeLocation: activeLocation, activeStep: activeStep};
   }
 
   /*return the time taken to reach specified step 
@@ -124,9 +123,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, map) {
           window.alert('Directions request failed due to ' + status);
       }
       });
-    });
-    
-    
+    });  
   }
 
   /*build an API url to call weather for a specific point*/
@@ -148,6 +145,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, map) {
         plotWeather(weather, map);
       }
     });
+  }
 
   function plotWeather(weatherData, map) {
   function setMapOnAll(map) {
@@ -188,8 +186,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, map) {
     showMarkers();
   }
 }
-    
-  }
+  
 }
 
 /*Add Google Places autocomplete functionality to search boxes*/
