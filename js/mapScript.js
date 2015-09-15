@@ -54,7 +54,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       }
       return weatherLocations;
     }
-  
+    
     /*find the geolocation associated with a given distance along the route and return the step associated
     with with that geolocation*/
   function getLocationPoint (searchDistance, directions) {
@@ -70,7 +70,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
               locationArray[1] = polyline[k];
               currentDistance = google.maps.geometry.spherical.computeLength(locationArray);
               cumulativeDistance += currentDistance;
-              activeLocation = polyline[k].G+","+polyline[k].K;
+              activeLocation = polyline[k].H+","+polyline[k].L;
             }
             activeStep = j;
           }
@@ -85,7 +85,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         var timePromise = new Promise (function(resolve, reject){
           var arraySize = 0;
           var timeArray = [];
-
           function timePromise (timeMethod, locationArray, arraySize, array) {
               timeMethod.then(function(response) {
                 if (arraySize < locationArray.length-1) {
