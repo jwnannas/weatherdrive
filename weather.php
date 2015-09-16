@@ -14,6 +14,7 @@
 							"longitude"=>$jsonWeatherSummary["longitude"],
 							"locationName" =>$value["locationName"],
 							"locationTime" =>$value["locationTime"],
+							"convertedLocationTime" =>getTime($value["locationTime"], $jsonWeatherSummary["timezone"]),
 							"weatherInfo" => getHourlyWeather($jsonWeatherSummary, $value["locationTime"])
 							);
 							getHourlyWeather($jsonWeatherSummary, $value["locationTime"]);
@@ -33,4 +34,12 @@
 		}
 		return $predictedWeather;
 	}
+	
+	function getTime ($unixTime, $timeZone) {
+		$date = new DateTime();
+		$date->setTimestamp($unixTime);
+		$date->setTimeZone(new DateTimeZone($timeZone));
+		return $date->format("h:i:s a T D M j Y");
+	}
+	
 ?>

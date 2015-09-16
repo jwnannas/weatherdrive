@@ -25,7 +25,7 @@
 									<label for="destination">Destination</label>
 									<input type="text" name="destination" id="destination" class="form-control">
 									<br>
-									<button type="button" id="search" class="btn btn-default" onclick="">Search</button>
+									<button type="button" id="search" class="btn btn-default">Search</button>
 								</form>
 							</td>
 						</tr>

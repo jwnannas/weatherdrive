@@ -1,3 +1,4 @@
+var infoWindow = new google.maps.InfoWindow;
 var markers = [];
 var map;
 
@@ -6,11 +7,10 @@ function initialize() {
   /*instantiate variables to load direction capability to the map*/
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer({
-    draggable: true,
-    map: map});
+    map: map, suppressMarkers: true });
   var mapOptions = {
     center: { lat: 42.37469, lng: -71.12085},//center the map on Cambridge, MA
-    zoom: 12
+    zoom: 12,
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
@@ -26,12 +26,12 @@ function initialize() {
 /*display the route when searched*/
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   directionsService.route({
-    origin: document.getElementById('origin').value,
+      origin: document.getElementById('origin').value,
       destination: document.getElementById('destination').value,
       travelMode: google.maps.TravelMode.DRIVING
   }, function(response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
-          var numWeatherPoints = 3;//Preset now but will pull from search when built
+          var numWeatherPoints = 5;//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
         buildTimeArray(weatherLocations).then(function(response) {
             getWeather(addWeatherURLs(weatherLocations, response));
@@ -47,7 +47,10 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     var weatherLocations = [];
     var directions = response.routes[0].legs[0];
     var distance = directions.distance["value"];
-    for (i = 0; i < numWeatherPoints ; i++) {
+    var steps = directions.steps.length;
+    weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0};
+    weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1 };
+    for (i = 1; i < numWeatherPoints-1; i++) {
       searchDistance = distance*(i/(numWeatherPoints-1));     
       locationPoint = getLocationPoint(searchDistance, directions);
       weatherLocations[i] = locationPoint;
@@ -173,22 +176,42 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       clearMarkers();
       markers = [];
     }  
+    
+    function makeWeatherWindow(weatherObject) {
+ 		var weatherWindow = "<h6>"+weatherObject["locationName"]+"</h6>"+
+ 								"Estimated Arrival Time to this point: "+weatherObject["convertedLocationTime"]+
+ 								'<ul>';
+ 		for (i in weatherObject["weatherInfo"]) {
+ 			weatherWindow += "<li>"+i + ": " + weatherObject["weatherInfo"][i]+"</li>";
+ 		}
+ 		weatherWindow += "</ul></p>"
+ 		return weatherWindow
+    }
   
     deleteMarkers();
       var weatherPoints = JSON.parse(weatherData);
-      console.log(weatherPoints);
       for (m = 0; m < weatherPoints.length; m++) {
         var lat = Number(weatherPoints[m]["latitude"]);
         var lng = Number(weatherPoints[m]["longitude"]);
         var myLatlng = {lat: lat, lng: lng};
+        
         var marker = new google.maps.Marker({
           position: myLatlng,
           map: map,
           title: weatherPoints[m]["locationName"]
         });
+        
         markers.push(marker);
-        showMarkers();
+        
+        marker.html = makeWeatherWindow(weatherPoints[m]);
+        ;
+        
+        google.maps.event.addListener(marker, 'click', function() {
+        	infoWindow.setContent(this.html);
+        	infoWindow.open(map, this);
+        });
       }
+      showMarkers();
   }
 }
 
