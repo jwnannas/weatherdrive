@@ -33,7 +33,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       if (status === google.maps.DirectionsStatus.OK) {
           var numWeatherPoints = 5;//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
-        	getWeather(weatherLocations);
+          getWeather(weatherLocations);
           directionsDisplay.setDirections(response);
       } else {
           window.alert('Directions request failed due to ' + status);
@@ -116,14 +116,15 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }  
     
     function makeWeatherWindow(weatherObject) {
- 		var weatherWindow = "<h6>"+weatherObject["locationName"]+"</h6>"+
- 								"Estimated Arrival Time to this point: "+weatherObject["convertedLocationTime"]+
- 								'<ul>';
- 		for (i in weatherObject["weatherInfo"]) {
- 			weatherWindow += "<li>"+i + ": " + weatherObject["weatherInfo"][i]+"</li>";
- 		}
- 		weatherWindow += "</ul></p>"
- 		return weatherWindow
+    var weatherWindow = "<h6>"+weatherObject["locationName"]+"</h6>"+
+                "Estimated Arrival Time to this point: "+weatherObject["convertedLocationTime"]+
+                '<ul>Predicted';
+    for (i in weatherObject["predictedWeather"]) {
+      weatherWindow += "<li>"+i + ": " + weatherObject["predictedWeather"][i]+"</li>";
+    }
+    weatherWindow += "</ul>"
+
+    return weatherWindow
     }
   
     deleteMarkers();
@@ -145,8 +146,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         ;
         
         google.maps.event.addListener(marker, 'click', function() {
-        	infoWindow.setContent(this.html);
-        	infoWindow.open(map, this);
+          infoWindow.setContent(this.html);
+          infoWindow.open(map, this);
         });
       }
       showMarkers();

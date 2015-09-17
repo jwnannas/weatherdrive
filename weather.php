@@ -5,7 +5,7 @@
 	$locationTimeArray = adjustLocationTimeArray($array);
 	
 	foreach ($locationTimeArray as $value) {
-		$weather[] = getWeatherSummary(file_get_contents($apiKey.$value["activeLocation"].",".$value["locationTime"]), $value);
+		$weather[] = getWeatherSummary(file_get_contents($apiKey.$value["activeLocation"].",".$value["locationTime"]."?exclude=minutely,hourly,flags,daily"), $value);
 	}
 	
 	$weatherResponse = json_encode($weather);
@@ -19,25 +19,9 @@
 							"locationName" =>$value["locationName"],
 							"locationTime" =>$value["locationTime"],
 							"convertedLocationTime" =>getTime($value["locationTime"], $jsonWeatherSummary["timezone"]),
-							"weatherInfo" => getHourlyWeather($jsonWeatherSummary, $value["locationTime"])
+							"predictedWeather" => $jsonWeatherSummary["currently"],
 							);
-							getHourlyWeather($jsonWeatherSummary, $value["locationTime"]);
 		return $currentSummary;
-	}
-	
-	function getHourlyWeather ($jsonWeatherSummary, $time) {
-		$i = 1;
-		$predictedWeather = $jsonWeatherSummary["hourly"]["data"][0];
-		while ($jsonWeatherSummary["hourly"]["data"][$i]["time"] <= $time) {
-			if ($i == 23) {
-				$predictedWeather = $jsonWeatherSummary["hourly"]["data"][$i];
-				break;
-			} else {
-				$predictedWeather = $jsonWeatherSummary["hourly"]["data"][$i];
-				$i++;
-			}
-		}
-		return $predictedWeather;
 	}
 	
 	function getTime ($unixTime, $timeZone) {
