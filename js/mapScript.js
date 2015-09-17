@@ -33,9 +33,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       if (status === google.maps.DirectionsStatus.OK) {
           var numWeatherPoints = 5;//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
-        buildTimeArray(weatherLocations).then(function(response) {
-            getWeather(addWeatherURLs(weatherLocations, response));
-        });
+        	getWeather(weatherLocations);
           directionsDisplay.setDirections(response);
       } else {
           window.alert('Directions request failed due to ' + status);
@@ -48,8 +46,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     var directions = response.routes[0].legs[0];
     var distance = directions.distance["value"];
     var steps = directions.steps.length;
-    weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0};
-    weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1 };
+    weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0)};
+    weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value)};
     for (i = 1; i < numWeatherPoints-1; i++) {
       searchDistance = distance*(i/(numWeatherPoints-1));     
       locationPoint = getLocationPoint(searchDistance, directions);
@@ -78,69 +76,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             activeStep = j;
           }
       }
-      return {activeLocation: activeLocation, activeStep: activeStep};
+      return {activeLocation: activeLocation, activeStep: activeStep, locationName: "", locationTime: ""};
     }
 
-    /*return the time taken to reach specified step 
-    in the directions object for this search*/
-  function buildTimeArray(locationArray) {
-      return new Promise (function(resolve, reject) {
-        var timePromise = new Promise (function(resolve, reject){
-          var arraySize = 0;
-          var timeArray = [];
-          function timePromise (timeMethod, locationArray, arraySize, array) {
-              timeMethod.then(function(response) {
-                if (arraySize < locationArray.length-1) {
-                  array.push(response);
-                  arraySize ++;
-                  timePromise(getTime(locationArray, arraySize), locationArray, arraySize, array);
-                } else {
-                  array.push(response);
-                  resolve(array);
-                }
-            });
-          }
-        timePromise(getTime(locationArray, arraySize), locationArray, arraySize, timeArray);
-      });
-    
-        timePromise.then(function(response) {
-            resolve (response);
-        });
-      });
-  }
-    
-  function getTime (locationArray, l) {
-    return new Promise (function(resolve, reject) {
-          var pointDirectionsService = new google.maps.DirectionsService;
-          var geoPoint = locationArray[l]["activeLocation"].split(",");
-          var lt = Number(geoPoint[0]);
-          var lg = Number(geoPoint[1]);
-          pointDirectionsService.route({
-            origin: document.getElementById('origin').value,
-            destination: {lat: lt, lng: lg},
-            travelMode: google.maps.TravelMode.DRIVING
-          }, function(pointResponse, status, locationTime) {
-            if (status === google.maps.DirectionsStatus.OK) {
-              locationInfo = {locationName: pointResponse.routes[0].legs[0]["end_address"], locationTime: Number(pointResponse.routes[0].legs[0]["duration"].value)};                 
-              resolve (locationInfo);
-            } else {
-                window.alert('Directions request failed due to ' + status);
-            }
-          });
-      });  
-    }
-
-    /*build an API url to call weather for a specific point*/
-  function addWeatherURLs (locations, times) {
-    var weatherArray = [];
-    for (l = 0; l < times.length; l++) {
-      var predictionTime = (Date.now() / 1000 | 0) + times[l]["locationTime"];
-      var weatherAPICall = locations[l]["activeLocation"] + "," + predictionTime;
-      weatherArray[l] = {location: locations[l]["activeLocation"], locationName: times[l]["locationName"], locationTime: predictionTime, locationAPICall: weatherAPICall};
-      }
-      return weatherArray;
-    }
-  
     /*return an array of predicted weather for the specified array of locations and times */
   function getWeather (array) {
     $.ajax({

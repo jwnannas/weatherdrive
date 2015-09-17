@@ -1,9 +1,13 @@
 <?php
 	$array = $_POST['array'];
 	$apiKey = "https://api.forecast.io/forecast/d0b0ba7f5bd34dbacdc9e469a3487298/";
-	foreach ($array as $value) {
-		$weather[] = getWeatherSummary(file_get_contents($apiKey.$value["locationAPICall"]), $value);
+	
+	$locationTimeArray = adjustLocationTimeArray($array);
+	
+	foreach ($locationTimeArray as $value) {
+		$weather[] = getWeatherSummary(file_get_contents($apiKey.$value["activeLocation"].",".$value["locationTime"]), $value);
 	}
+	
 	$weatherResponse = json_encode($weather);
 	echo $weatherResponse;
 
@@ -25,7 +29,8 @@
 		$i = 1;
 		$predictedWeather = $jsonWeatherSummary["hourly"]["data"][0];
 		while ($jsonWeatherSummary["hourly"]["data"][$i]["time"] <= $time) {
-			if ($i == 24) {
+			if ($i == 23) {
+				$predictedWeather = $jsonWeatherSummary["hourly"]["data"][$i];
 				break;
 			} else {
 				$predictedWeather = $jsonWeatherSummary["hourly"]["data"][$i];
@@ -40,6 +45,24 @@
 		$date->setTimestamp($unixTime);
 		$date->setTimeZone(new DateTimeZone($timeZone));
 		return $date->format("h:i:s a T D M j Y");
+	}
+	
+	
+	function adjustLocationTimeArray ($array) {
+	
+		for ($j = 1; $j <= count($array)-2; $j++) {
+		
+			$directionsKey = "AIzaSyCzgguKie1LoZymULr-ZMo_3kRunFimFEg";
+			$directionsObject = file_get_contents("https://maps.googleapis.com/maps/api/directions/json?origin=".$array[0]["activeLocation"]."&destination=".$array[$j]["activeLocation"]."&key=".$directionsKey);
+			$directionsSummary = json_decode($directionsObject, true);
+		
+			$locationName = $directionsSummary["routes"][0]["legs"][0]["end_address"];
+			$locationTime = time() + $directionsSummary["routes"][0]["legs"][0]["duration"]["value"];
+			
+			$array[$j]["locationName"] = $locationName;
+			$array[$j]["locationTime"] = $locationTime;
+		}
+		return $array;
 	}
 	
 ?>
