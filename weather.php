@@ -20,6 +20,7 @@
 							"locationTime" =>$value["locationTime"],
 							"convertedLocationTime" =>getTime($value["locationTime"], $jsonWeatherSummary["timezone"]),
 							"predictedWeather" => $jsonWeatherSummary["currently"],
+							"activeStep" => $value["activeStep"],
 							);
 		return $currentSummary;
 	}

@@ -6,9 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="css/weather-icons-wind.min.css">
+	<link rel="stylesheet" href="css/weather-icons.min.css">
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places">
     </script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+ 	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
 <body>
 	<header><h1>WeatherDrive</h1></header>
@@ -33,7 +36,8 @@
 					<tbody>
 						<tr>
 							<td>
-								<div id="directions"></div>
+									<div id="directions"></div>
+								</div>
 							</td>
 						</tr>
 					</tbody>
