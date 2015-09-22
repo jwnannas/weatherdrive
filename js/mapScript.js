@@ -2,6 +2,12 @@ var infoWindow = new google.maps.InfoWindow;
 var markers = [];
 var map;
 
+$('.info').slimScroll({
+  color: '#FFA500',
+  size: '10px',
+    height: '100%'
+});
+
 /*Create the Google Map*/
 function initialize() {
   /*instantiate variables to load direction capability to the map*/
@@ -161,7 +167,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         markers.push(marker);
         
         marker.html = makeWeatherWindow(weatherPoints[m]);
-        ;
         
         google.maps.event.addListener(marker, 'click', function() {
           infoWindow.setContent(this.html);

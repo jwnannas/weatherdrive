@@ -1,23 +1,38 @@
-html, body {
+html {
 	height: 100%;
 }
 
-header {
-	height: 10%;
-	padding: 0;
+body {
+	height: 100%;
+	padding: 50px 1% 0 1%;
+	background-image: url("../images/1.jpg");
 }
 
-h1 {
+nav, .navbar {
+	height: 5%;
+	margin-bottom: 0;
+	color: #FFA500;
+	background-color: #5C5C5C;
+	border-bottom: 3px solid #FFA500;
+}
+
+h3 {
 	margin: 0;
 }
 
+label {
+	color: white;
+}
+
 #actionPanel {
-	height: 90%;
+	position: relative;
+	height: 100%;
 }
 
 .map-container{
     position: relative;
     height: 100%;
+    border: 1px solid #FFA500;
 }
 .map-container .map-canvas{
     position: absolute;
@@ -38,12 +53,12 @@ h1 {
 
 #mapColumn {
 	height: 100%;
-	padding: 0;
+	padding: 1% 0 1% 1%;
 }
 
 #infoPane {
 	height: 100%;
-	padding: 0;
+	padding: 1% 0 1% 0;
 }
 
 #search {
@@ -57,10 +72,20 @@ table {
 	width: 100%;
 	margin-bottom: 0;
 	border-collapse: collapse;
+	padding: 1%;
 }
 
 thead, thead tr, thead tr td{
 	display: block;
+}
+
+.info {
+	border: 1px solid #FFA500;
+}
+
+table {
+	background: rgb(255,255,255);
+	background: rgba(255,255,255,0.5);
 }
 
 .wi {
