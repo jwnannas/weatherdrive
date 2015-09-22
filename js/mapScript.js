@@ -7,7 +7,7 @@ function initialize() {
   /*instantiate variables to load direction capability to the map*/
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer({
-    polylineOptions: {strokeColor: "#FFA500"},
+    //polylineOptions: {strokeColor: "#FFA500"},
     map: map, suppressMarkers: true }
     );
   var mapOptions = {
@@ -30,8 +30,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   directionsService.route({
       origin: document.getElementById('origin').value,
       destination: document.getElementById('destination').value,
-      travelMode: google.maps.TravelMode.DRIVING,
-      provideRouteAlternatives: true
+      travelMode: google.maps.TravelMode.DRIVING
+      //provideRouteAlternatives: true
   }, function(response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
           var numWeatherPoints = 3;//Preset now but will pull from search when built
@@ -142,19 +142,19 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       var weatherPoints = JSON.parse(weatherData);
       $(".adp-directions tr").eq(0).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[0]["predictedWeather"]["icon"] + '"></i>'+"</td>");
       for (m = 0; m < weatherPoints.length; m++) {
-        if (m > 0) {
+        if (m > 0 && m < weatherPoints.length-1) {
           addCollapse(weatherPoints[m-1]["activeStep"], weatherPoints[m]["activeStep"], m, '<i class="wi wi-forecast-io-' + weatherPoints[m]["predictedWeather"]["icon"] + '"></i>');
         }
         var lat = Number(weatherPoints[m]["latitude"]);
         var lng = Number(weatherPoints[m]["longitude"]);
         var myLatlng = {lat: lat, lng: lng};
         
-        var weatherIcon = "images/" + weatherPoints[m]["predictedWeather"]["icon"] + ".svg";
+        var weatherIcon = "images/" + weatherPoints[m]["predictedWeather"]["icon"] + ".png";
         
         var marker = new google.maps.Marker({
           position: myLatlng,
           map: map,
-          //icon: weatherIcon,
+          icon: weatherIcon,
           title: weatherPoints[m]["locationName"]
         });
         
@@ -168,16 +168,17 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
           infoWindow.open(map, this);
         });
       }
+      $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[weatherPoints.length-1]["predictedWeather"]["icon"] + '"></i>'+"</td>");
       showMarkers();
 
       function addCollapse (step1, step2, counter, weather) {
-        $(".adp-directions tr").eq(Number(step1)+counter-1).attr({'data-toggle':'collapse', 'data-target':'#routeTo'+step2});
-        $(".adp-directions tr").eq(Number(step2)+counter-1).append("<td>"+weather+"</td>");
-        for (n=Number(step1)+counter; n < Number(step2)+counter-1; n++) {
-          $(".adp-directions tr").eq(n).addClass("step"+step2);
-       }
-        $(".step"+step2).wrapAll("<td id='td"+step2+"' />");
-        $("#td"+step2).wrap("<tr id='routeTo"+step2+"' class='collapse' />");
+        //$(".adp-directions tr").eq(Number(step1)+counter-1).attr({'data-toggle':'collapse', 'data-target':'#routeTo'+step2});
+        $(".adp-directions tr").eq(Number(step2)-1).append("<td>"+weather+"</td>");
+        //for (n=Number(step1)+counter; n < Number(step2)+counter-1; n++) {
+          //$(".adp-directions tr").eq(n).addClass("step"+step2);
+       //}
+        //$(".step"+step2).wrapAll("<td id='td"+step2+"' />");
+        //$("#td"+step2).wrap("<tr id='routeTo"+step2+"' class='collapse' />");
       }
     }
 }
