@@ -143,7 +143,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       $(".adp-directions tr").eq(0).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[0]["predictedWeather"]["icon"] + '"></i>'+"</td>");
       for (m = 0; m < weatherPoints.length; m++) {
         if (m > 0 && m < weatherPoints.length-1) {
-          addCollapse(weatherPoints[m-1]["activeStep"], weatherPoints[m]["activeStep"], m, '<i class="wi wi-forecast-io-' + weatherPoints[m]["predictedWeather"]["icon"] + '"></i>');
+        $(".adp-directions tr").eq(Number(weatherPoints[m]["activeStep"])-1).append('<td><i class="wi wi-forecast-io-' + weatherPoints[m]["predictedWeather"]["icon"] + '"></i></td>');
         }
         var lat = Number(weatherPoints[m]["latitude"]);
         var lng = Number(weatherPoints[m]["longitude"]);
@@ -170,16 +170,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       }
       $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[weatherPoints.length-1]["predictedWeather"]["icon"] + '"></i>'+"</td>");
       showMarkers();
-
-      function addCollapse (step1, step2, counter, weather) {
-        //$(".adp-directions tr").eq(Number(step1)+counter-1).attr({'data-toggle':'collapse', 'data-target':'#routeTo'+step2});
-        $(".adp-directions tr").eq(Number(step2)-1).append("<td>"+weather+"</td>");
-        //for (n=Number(step1)+counter; n < Number(step2)+counter-1; n++) {
-          //$(".adp-directions tr").eq(n).addClass("step"+step2);
-       //}
-        //$(".step"+step2).wrapAll("<td id='td"+step2+"' />");
-        //$("#td"+step2).wrap("<tr id='routeTo"+step2+"' class='collapse' />");
-      }
     }
 }
 

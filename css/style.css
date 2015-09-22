@@ -63,19 +63,6 @@ thead, thead tr, thead tr td{
 	display: block;
 }
 
-tbody, tbody tr {
-	display: block;
-}
-
-.adp-step, .adp-substep {
-	border-top: none;
-}
-
-tbody tr tr {
-	border-top: 1px solid #cdcdcd;
-}
-
-
 .wi {
 	color: #FFA500;
 }
