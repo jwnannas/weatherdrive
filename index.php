@@ -12,7 +12,8 @@
     </script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
  	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
- 	  <script type="text/javascript" src="jquery.slimscroll.min.js"></script>
+ 	  <script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
+ 	  <script src="libraries/infobox.js" type="text/javascript"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -24,7 +25,7 @@
 	</nav>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
-			<div id="infoPane" class="col-sm-3 col-md-3 col-lg-2">
+			<div id="infoPane" class="col-sm-3 col-md-3 col-lg-3">
 				<table class="info">
 					<thead>
 						<tr>
@@ -50,7 +51,7 @@
 					</tbody>
 				</table>
 			</div>		
-			<div id="mapColumn" class="col-sm-9 col-md-9 col-lg-10">
+			<div id="mapColumn" class="col-sm-9 col-md-9 col-lg-9">
 				<div class="map-container">
 					<div id="map-canvas" class="map-canvas"></div>
 				</div>

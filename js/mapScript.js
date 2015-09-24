@@ -4,8 +4,8 @@ var map;
 
 $('.info').slimScroll({
   color: '#FFA500',
-  size: '10px',
-    height: '100%'
+  size: '5px',
+  height: '100%',
 });
 
 /*Create the Google Map*/
@@ -55,8 +55,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     var directions = response.routes[0].legs[0];
     var distance = directions.distance["value"];
     var steps = directions.steps.length;
-    weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0)};
-    weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value)};
+    weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0), distance: 0};
+    weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
     for (i = 1; i < numWeatherPoints-1; i++) {
       searchDistance = distance*(i/(numWeatherPoints-1));     
       locationPoint = getLocationPoint(searchDistance, directions);
@@ -85,7 +85,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             activeStep = j;
           }
       }
-      return {activeLocation: activeLocation, activeStep: activeStep, locationName: "", locationTime: ""};
+      return {activeLocation: activeLocation, activeStep: activeStep, locationName: "", locationTime: "", distance: (cumulativeDistance * 0.000621371).toFixed()};
     }
 
     /*return an array of predicted weather for the specified array of locations and times */
@@ -125,27 +125,30 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }  
     
     function makeWeatherWindow(weatherObject) {
-    var weatherWindow = "<h6>"+weatherObject["locationName"]+"</h6>"+
-                "Estimated Arrival Time to this point: "+weatherObject["convertedLocationTime"]+
-                '<ul>Predicted:'
-    for (i in weatherObject["predictedWeather"]) {
-    if (i == "icon") {
-      weatherIcon = '<i class="wi wi-forecast-io-' + weatherObject["predictedWeather"][i] + '"></i>';
-      weatherWindow += "<li>" + weatherObject["predictedWeather"][i] + weatherIcon + "</li>";
-    } else if (i == "windBearing") {
-      var bearingIcon = '<i class="wi wi-wind from-' + weatherObject["predictedWeather"][i] + '-deg"></i>';
-      weatherWindow += "<li>" + weatherObject["predictedWeather"][i] + bearingIcon + "</li>";
-    } else {
-          weatherWindow += "<li>"+i + ": " + weatherObject["predictedWeather"][i]+"</li>";
-    }
-    }
-    weatherWindow += "</ul>"
+      var weatherWindow = "<div class='weatherInfoContainer'><div class='weatherBoxTitle'><b>"+weatherObject["locationName"]+
+                      '</b><br>'+'<small>ETA: <i>'+weatherObject["convertedLocationTime"]+
+                      '<span class="weatherBoxTitleSpace"></span><i>'+weatherObject["distance"]+'mi</i></small>'+ 
+                      '</div><table><tr class="prominentWeather">'+ 
+              '<td><i class="wi wi-forecast-io-' + weatherObject["predictedWeather"]["icon"] + '"></i></td>'+
+              '<td><b>' + (weatherObject["predictedWeather"]["temperature"]).toFixed() + '&deg;</b></td>'+
+              '<td><i class="wi wi-wind from-' + weatherObject["predictedWeather"][i] + '-deg"></td><tr><td>'+
+               weatherObject["predictedWeather"]["summary"]+'</td>'+
+              '<td>App. Temp: '+(weatherObject["predictedWeather"]["apparentTemperature"]).toFixed()+'&deg; F</td><td>'+
+              (weatherObject["predictedWeather"]["windSpeed"]).toFixed()+'mph</td></tr>'+
+              '<tr class="top detailWeather"><td>Precip Prob: '+ (weatherObject["predictedWeather"]["precipProbability"]).toFixed()+'&#37;</td>'+
+              '<td>Humidity: '+(weatherObject["predictedWeather"]["humidity"]*100).toFixed()+'&#37;</td>'+
+              '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
+              '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(1)+'in/hr</td>'+
+              '<td>Dew Point: '+(weatherObject["predictedWeather"]["dewPoint"]).toFixed()+'&deg;</td>'+
+              '<td>Cloud Cover: '+(weatherObject["predictedWeather"]["cloudCover"]*100).toFixed()+'&#37;</td></tr>'+
+              '</table></div>';
 
     return weatherWindow
     }
   
     deleteMarkers();
       var weatherPoints = JSON.parse(weatherData);
+      console.log(weatherPoints);
       $(".adp-directions tr").eq(0).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[0]["predictedWeather"]["icon"] + '"></i>'+"</td>");
       for (m = 0; m < weatherPoints.length; m++) {
         if (m > 0 && m < weatherPoints.length-1) {
@@ -166,11 +169,31 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         
         markers.push(marker);
         
-        marker.html = makeWeatherWindow(weatherPoints[m]);
         
+     marker.html = makeWeatherWindow(weatherPoints[m]);
+     
+    var myOptions = {
+    disableAutoPan: false
+    ,maxWidth: 0
+    ,pixelOffset: new google.maps.Size(-140, 0)
+    ,zIndex: null
+    ,closeBoxMargin: "2px 2px 2px 2px"
+    ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+    ,infoBoxClearance: new google.maps.Size(1, 1)
+    ,isHidden: false
+    ,pane: "floatPane"
+    ,enableEventPropagation: false
+  };
+  
+    var ib = new InfoBox(myOptions);
+    
         google.maps.event.addListener(marker, 'click', function() {
-          infoWindow.setContent(this.html);
-          infoWindow.open(map, this);
+        var boxText = document.createElement("div");
+        boxText.className = "weatherBox";
+        boxText.innerHTML = this.html;
+        ib.setContent(boxText);
+          ib.open(map, this);
+          
         });
       }
       $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[weatherPoints.length-1]["predictedWeather"]["icon"] + '"></i>'+"</td>");

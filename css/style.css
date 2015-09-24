@@ -4,7 +4,7 @@ html {
 
 body {
 	height: 100%;
-	padding: 50px 1% 0 1%;
+	padding: 50px 1% 0 0;
 	background-image: url("../images/1.jpg");
 }
 
@@ -58,7 +58,7 @@ label {
 
 #infoPane {
 	height: 100%;
-	padding: 1% 0 1% 0;
+	padding: 1% 0 1% 1%;
 }
 
 #search {
@@ -91,3 +91,39 @@ table {
 .wi {
 	color: #FFA500;
 }
+
+.weatherBox {
+	width: 350px;
+	background-color: white;
+}
+
+.weatherBoxTitle {
+	border-bottom: 2px solid #FFA500;
+}
+
+.weatherInfoContainer {
+	padding: 1%;
+}
+
+.prominentWeather {
+	font-size: 5em;
+}
+
+.top {
+	border-top: 1px solid gray;
+}
+
+.detailWeather {
+	text-align: left;
+}
+
+.weatherBoxTitleSpace {
+	padding-left: 25%;
+}
+
+.weatherBox table{
+	display: table;
+	text-align: center;
+}
+
+
