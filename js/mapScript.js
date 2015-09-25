@@ -3,7 +3,7 @@ var markers = [];
 var map;
 
 $('.info').slimScroll({
-  color: '#FFA500',
+  color: '#F99E28',
   size: '5px',
   height: '100%',
 });
@@ -40,7 +40,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       //provideRouteAlternatives: true
   }, function(response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
-          var numWeatherPoints = 3;//Preset now but will pull from search when built
+          var numWeatherPoints = 5;//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
           getWeather(weatherLocations);
           directionsDisplay.setDirections(response);
@@ -131,7 +131,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                       '</div><table><tr class="prominentWeather">'+ 
               '<td><i class="wi wi-forecast-io-' + weatherObject["predictedWeather"]["icon"] + '"></i></td>'+
               '<td><b>' + (weatherObject["predictedWeather"]["temperature"]).toFixed() + '&deg;</b></td>'+
-              '<td><i class="wi wi-wind from-' + weatherObject["predictedWeather"][i] + '-deg"></td><tr><td>'+
+              '<td><i class="wi wi-wind from-' + weatherObject["predictedWeather"]["windBearing"] + '-deg"></i></td><tr><td>'+
                weatherObject["predictedWeather"]["summary"]+'</td>'+
               '<td>App. Temp: '+(weatherObject["predictedWeather"]["apparentTemperature"]).toFixed()+'&deg; F</td><td>'+
               (weatherObject["predictedWeather"]["windSpeed"]).toFixed()+'mph</td></tr>'+
@@ -149,10 +149,13 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     deleteMarkers();
       var weatherPoints = JSON.parse(weatherData);
       console.log(weatherPoints);
-      $(".adp-directions tr").eq(0).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[0]["predictedWeather"]["icon"] + '"></i>'+"</td>");
+      $("table .adp-directions").before('<div data-toggle="collapse" data-target=".nonWeatherStep" class="toggleSteps">Toggle all steps</div>');
+      addCollapseClass(weatherPoints[weatherPoints.length-1]["activeStep"]);
+      removeCollapseClass(weatherPoints);
+      $(".adp-directions tr").eq(0).after(getWeatherRow(weatherPoints[0]));
       for (m = 0; m < weatherPoints.length; m++) {
         if (m > 0 && m < weatherPoints.length-1) {
-        $(".adp-directions tr").eq(Number(weatherPoints[m]["activeStep"])-1).append('<td><i class="wi wi-forecast-io-' + weatherPoints[m]["predictedWeather"]["icon"] + '"></i></td>');
+        $(".adp-directions tr").eq(Number(weatherPoints[m]["activeStep"])+m).after(getWeatherRow(weatherPoints[m]));
         }
         var lat = Number(weatherPoints[m]["latitude"]);
         var lng = Number(weatherPoints[m]["longitude"]);
@@ -169,35 +172,58 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         
         markers.push(marker);
         
-        
-     marker.html = makeWeatherWindow(weatherPoints[m]);
+      marker.html = makeWeatherWindow(weatherPoints[m]);
      
-    var myOptions = {
-    disableAutoPan: false
-    ,maxWidth: 0
-    ,pixelOffset: new google.maps.Size(-140, 0)
-    ,zIndex: null
-    ,closeBoxMargin: "2px 2px 2px 2px"
-    ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
-    ,infoBoxClearance: new google.maps.Size(1, 1)
-    ,isHidden: false
-    ,pane: "floatPane"
-    ,enableEventPropagation: false
-  };
+      var myOptions = {
+        disableAutoPan: false
+        ,maxWidth: 0
+        ,pixelOffset: new google.maps.Size(-140, 0)
+        ,zIndex: null
+        ,closeBoxMargin: "2px 2px 2px 2px"
+        ,closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif"
+        ,infoBoxClearance: new google.maps.Size(1, 1)
+        ,isHidden: false
+        ,pane: "floatPane"
+        ,enableEventPropagation: false
+    };
   
-    var ib = new InfoBox(myOptions);
+      var ib = new InfoBox(myOptions);
     
         google.maps.event.addListener(marker, 'click', function() {
-        var boxText = document.createElement("div");
-        boxText.className = "weatherBox";
-        boxText.innerHTML = this.html;
-        ib.setContent(boxText);
-          ib.open(map, this);
-          
+          var boxText = document.createElement("div");
+          boxText.className = "weatherBox";
+          boxText.innerHTML = this.html;
+          ib.setContent(boxText);
+            ib.open(map, this);
         });
       }
-      $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])).append("<td>"+'<i class="wi wi-forecast-io-' + weatherPoints[weatherPoints.length-1]["predictedWeather"]["icon"] + '"></i>'+"</td>");
+      $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])+weatherPoints.length-1).after(getWeatherRow(weatherPoints[weatherPoints.length-1]));
       showMarkers();
+      
+      function getWeatherRow(weather) {
+        var trimmedDate = weather["convertedLocationTime"];
+        trimmedDate = trimmedDate.substring(0, trimmedDate.indexOf('T')+1);
+        var weatherRow = "<tr><td></td><td>"+'<i class="wi wi-forecast-io-' + weather["predictedWeather"]["icon"] + '"></i></td>'+
+                  '<td><b>'+(weather["predictedWeather"]["temperature"]).toFixed() + '&deg; F</b>'+
+                  ' <i>'+weather["predictedWeather"]["summary"]+'</i> &#64; ' + trimmedDate +
+                  '</td></tr>';
+                  
+        return weatherRow;  
+      }
+      
+      function addCollapseClass (step) {
+        for (n=0; n <= step; n++) {
+          $(".adp-directions tr").eq(n).addClass("nonWeatherStep collapse");
+       }
+      }
+      
+      function removeCollapseClass (weather) {
+        for (o=0; o <= weather.length-1; o++) {
+        console.log(weather[o]["activeStep"]);
+          $(".adp-directions tr").eq(weather[o]["activeStep"]).removeClass("nonWeatherStep collapse");
+        }
+      }
+      
     }
 }
 

@@ -19,7 +19,7 @@
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<h3 class="navbard-brand" href="">WeatherDrive</h3>
+				<h1 class="navbard-brand"><img src="images/logo.png"></h1>
 			</div>
 		</div>
 	</nav>
@@ -41,9 +41,9 @@
 							</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td>
+					<tbody id="directionsTbody">
+						<tr id ="directionsTr"> 
+							<td id="directionsTD">
 									<div id="directions"></div>
 								</div>
 							</td>
