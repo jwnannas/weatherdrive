@@ -22,6 +22,12 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),
     mapOptions);
+    
+    //var radarLayer = new google.maps.KmlLayer({
+    //url: '',
+   // map: map
+ // });
+
     directionsDisplay.setMap(map);
   /*add event listener to search to display directions when destinations are entered*/
   var onClick = function() {
@@ -40,7 +46,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       //provideRouteAlternatives: true
   }, function(response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
-          var numWeatherPoints = 5;//Preset now but will pull from search when built
+          var numWeatherPoints = 4;//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
           getWeather(weatherLocations);
           directionsDisplay.setDirections(response);
@@ -135,12 +141,13 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                weatherObject["predictedWeather"]["summary"]+'</td>'+
               '<td>App. Temp: '+(weatherObject["predictedWeather"]["apparentTemperature"]).toFixed()+'&deg; F</td><td>'+
               (weatherObject["predictedWeather"]["windSpeed"]).toFixed()+'mph</td></tr>'+
-              '<tr class="top detailWeather"><td>Precip Prob: '+ (weatherObject["predictedWeather"]["precipProbability"]).toFixed()+'&#37;</td>'+
+              '<tr class="bottom detailWeather"><td>Precip Prob: '+ (weatherObject["predictedWeather"]["precipProbability"]).toFixed()+'&#37;</td>'+
               '<td>Humidity: '+(weatherObject["predictedWeather"]["humidity"]*100).toFixed()+'&#37;</td>'+
               '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
               '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(1)+'in/hr</td>'+
               '<td>Dew Point: '+(weatherObject["predictedWeather"]["dewPoint"]).toFixed()+'&deg;</td>'+
               '<td>Cloud Cover: '+(weatherObject["predictedWeather"]["cloudCover"]*100).toFixed()+'&#37;</td></tr>'+
+              '<tr class="bottom alert"><td>Alerts:</td> '+ weatherObject["preppedAlerts"] +
               '</table></div>';
 
     return weatherWindow
@@ -148,7 +155,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   
     deleteMarkers();
       var weatherPoints = JSON.parse(weatherData);
-      console.log(weatherPoints);
+      var weatherOutlook = weatherPoints.pop();
+    $("#expectedConditions").html("<div>Expected Trip Conditions: " + weatherOutlook + "</div>");
       $("table .adp-directions").before('<div data-toggle="collapse" data-target=".nonWeatherStep" class="toggleSteps">Toggle all steps</div>');
       addCollapseClass(weatherPoints[weatherPoints.length-1]["activeStep"]);
       removeCollapseClass(weatherPoints);
@@ -219,7 +227,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       
       function removeCollapseClass (weather) {
         for (o=0; o <= weather.length-1; o++) {
-        console.log(weather[o]["activeStep"]);
           $(".adp-directions tr").eq(weather[o]["activeStep"]).removeClass("nonWeatherStep collapse");
         }
       }
