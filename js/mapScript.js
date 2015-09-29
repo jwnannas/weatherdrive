@@ -1,12 +1,69 @@
 var infoWindow = new google.maps.InfoWindow;
 var markers = [];
 var map;
+var colors = ['#000','#000','#000','#000','#F99E28'];
+
+var options = {
+  lines: 15 // The number of lines to draw
+, length: 20 // The length of each line
+, width: 14 // The line thickness
+, radius: 30 // The radius of the inner circle
+, scale: 1 // Scales overall size of the spinner
+, corners: 1 // Corner roundness (0..1)
+, color: colors  // #rgb or #rrggbb or array of colors
+, opacity: 0.1 // Opacity of the lines
+, rotate: 0 // The rotation offset
+, direction: 1 // 1: clockwise, -1: counterclockwise
+, speed: 1 // Rounds per second
+, trail: 60 // Afterglow percentage
+, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+, zIndex: 2e9 // The z-index (defaults to 2000000000)
+, className: 'spinner' // The CSS class to assign to the spinner
+, top: '50%' // Top position relative to parent
+, left: '50%' // Left position relative to parent
+, shadow: false // Whether to render a shadow
+, hwaccel: false // Whether to use hardware acceleration
+, position: 'absolute' // Element positioning
+}
 
 $('.info').slimScroll({
-  color: '#F99E28',
-  size: '5px',
+  color: '#6C6C6C',
+  size: '10px',
   height: '100%',
 });
+
+var switchClick = function() {
+  switchBoxes($('#origin'), $('#destination'));   
+}
+
+document.getElementById('switch').addEventListener('click', switchClick);
+
+function switchBoxes (a, b) {
+  var holder = a.val();
+  a.val(b.val());
+  b.val(holder);
+}
+
+function getDensity (densitySelection, distance) {
+  switch (densitySelection) {
+    case 'Select Weather Point Density':
+      $('#density').val("medium");
+      return 5;
+    case 'Low':
+      return 3;
+    case 'Medium':
+      return 5;
+    case 'High':
+      return 7;
+    case 'Highest':
+      if ((distance/60) > 9) {
+        return Math.round(distance/60);
+      } else {
+        return 9;
+      }
+  }
+}
+
 
 /*Create the Google Map*/
 function initialize() {
@@ -46,7 +103,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       //provideRouteAlternatives: true
   }, function(response, status) {
       if (status === google.maps.DirectionsStatus.OK) {
-          var numWeatherPoints = 4;//Preset now but will pull from search when built
+          var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text, response.routes[0].legs[0]["distance"].value * 0.000621371);//Preset now but will pull from search when built
           weatherLocations = buildLocationsArray(response, numWeatherPoints);
           getWeather(weatherLocations);
           directionsDisplay.setDirections(response);
@@ -96,12 +153,15 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 
     /*return an array of predicted weather for the specified array of locations and times */
   function getWeather (array) {
+    var spinner = new Spinner(options).spin();
+  document.getElementById('spin').appendChild(spinner.el);
     $.ajax({
       type: "POST",
       url:"weather.php",
       data: {array: array},
       success: function(data) {
         var weather = data;
+        document.getElementById('spin').removeChild(spinner.el);
         plotWeather(weather);
       }
     });

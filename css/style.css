@@ -62,6 +62,39 @@ h1 {
 	width: 100%;
 }
 
+.carIcon {
+	text-align: center;
+	background-color: white;
+	width: 0;
+	padding: .5em;
+}
+
+#mapSearch {
+	display: table;
+}
+
+#mapSearch input {
+	border: none;
+	border-radius: 0;
+}
+
+#mapSearch tr {
+	display: table-row;
+}
+
+#mapSearch td {
+	display: table-cell;
+}
+
+#switch {
+	text-align: center;
+	background-color: white;
+}
+
+.origin {
+	border-bottom: 2px solid gray;
+}
+
 table {
 	display: block;
 	height: 100%;

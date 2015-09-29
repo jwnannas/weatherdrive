@@ -17,6 +17,7 @@
  	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
  	  <script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
  	  <script src="libraries/infobox.js" type="text/javascript"></script>
+ 	  <script src="libraries/spin.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -37,9 +38,37 @@
 						<tr>
 							<td>
 								<form>
-									<input type="text" name="origin" id="origin" class="form-control" placeholder="Origin">
-									<input type="text" name="destination" id="destination" class="form-control" placeholder="Destination">
+									<table id="mapSearch">
+										<tr>
+											<td class="carIcon">
+												<img src="images/car_A.png">
+											</td>
+											<td class="origin">
+												<input type="text" name="origin" id="origin" class="form-control" placeholder="Origin">
+											</td>
+											<td rowspan="2" id="switch">
+												<img src="images/switch.png">
+											</td>
+										</tr>
+										<tr>
+											<td class="carIcon">
+												<img src="images/car_B.png">
+											</td>
+											<td>
+												<input type="text" name="destination" id="destination" class="form-control" placeholder="Destination">
+											</td>
+										</tr>
+									</table>
 									<br>
+									<div class="form-group">
+									<select class= "form-control" name="density" id="density">
+										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Select Weather Point Density</option>
+										<option value="low">Low</option>
+										<option value="medium">Medium</option>
+										<option value="high">High</option>
+										<option value="highest">Highest</option>
+									</select>
+									</div>
 									<button type="button" id="search" class="btn btn-default">Get Directions and Weather</button>
 								</form>
 							</td>
@@ -59,6 +88,7 @@
 			</div>		
 			<div id="mapColumn" class="col-md-9 col-lg-9">
 				<div class="map-container">
+					<div id="spin"></div>
 					<div id="map-canvas" class="map-canvas"></div>
 				</div>
 			</div>
