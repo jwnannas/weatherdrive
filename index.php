@@ -11,13 +11,12 @@
 	<link rel="icon" 
       type="image/png" 
       href="favicon.ico">
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places">
-    </script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places"></script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
- 	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
- 	  <script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
- 	  <script src="libraries/infobox.js" type="text/javascript"></script>
- 	  <script src="libraries/spin.min.js" type="text/javascript"></script>
+ 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+ 	<script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
+ 	<script src="libraries/infobox.js" type="text/javascript"></script>
+ 	<script src="libraries/spin.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -80,7 +79,7 @@
 					<tbody id="directionsTbody">
 						<tr id ="directionsTr"> 
 							<td id="directionsTD">
-									<div id="directions"></div>
+								<div id="directions"></div>
 							</td>
 						</tr>
 					</tbody>
@@ -94,6 +93,6 @@
 			</div>
 		</div>
 	</div>
- <script src="js/mapScript.js" type="text/javascript"></script>
+	<script src="js/mapScript.js" type="text/javascript"></script>
 </body>
 </html>
