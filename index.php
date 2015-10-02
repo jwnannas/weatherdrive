@@ -20,18 +20,16 @@
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<img src="images/logo_icon.png">
+			<div class="navbar-text pull-left">
+				<img src="images/logoIcon.png">
 			</div>
-			<div class="nav navbar-nav navbar-right visible-md visible-lg">
-				<h1 class="navbard-brand"><img src="images/logo.png"></h1>
+			<div class="navbar-text pull-right">
+					<img src="images/logo.png"></h1>
 			</div>
-		</div>
 	</nav>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
-			<div id="infoPane" class="col-md-3 col-lg-3">
+			<div id="infoPane" class="col-md-4 col-lg-4">
 				<table class="info">
 					<thead>
 						<tr>
@@ -85,7 +83,7 @@
 					</tbody>
 				</table>
 			</div>		
-			<div id="mapColumn" class="col-md-9 col-lg-9">
+			<div id="mapColumn" class="col-md-8 col-lg-8">
 				<div class="map-container">
 					<div id="spin"></div>
 					<div id="map-canvas" class="map-canvas"></div>
