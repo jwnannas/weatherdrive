@@ -1,6 +1,6 @@
 var markers = [];
 var map;
-var colors = ['#000','#000','#000','#000','#000','#000','#000','#000','#000','#000','#F99E28','#F99E28','#F99E28','#000','#000'];
+var colors = ['#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#F99E28','#F99E28','#F99E28','#09132e','#09132e'];
 
 var options = {
   lines: 15 // The number of lines to draw
@@ -43,7 +43,7 @@ function switchBoxes (a, b) {
   b.val(holder);
 }
 
-function getDensity (densitySelection, distance) {
+function getDensity (densitySelection, duration) {
   switch (densitySelection) {
       case 'Select Weather Point Density':
           $('#density').val("medium");
@@ -55,8 +55,12 @@ function getDensity (densitySelection, distance) {
       case 'High':
           return 7;
       case 'Highest':
-          if ((distance/60) > 9) {
-            return Math.round(distance/60);
+          if ( duration > 9) {
+            if (duration < 30) {
+              return duration;
+            } else {
+              return 30;
+            }
           } else {
             return 9;
           }
@@ -100,11 +104,10 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
             var spinner = new Spinner(options).spin();
-        document.getElementById('spin').appendChild(spinner.el);
-            var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text, response.routes[0].legs[0]["distance"].value * 0.000621371);//Preset now but will pull from search when built
+            document.getElementById('spin').appendChild(spinner.el);
+            var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[0].legs[0]["duration"].value/3600));
             weatherLocations = buildLocationsArray(response, numWeatherPoints);
-            getWeather(weatherLocations, spinner);
-            directionsDisplay.setDirections(response);
+            getWeather(weatherLocations, spinner, directionsDisplay, response);
         } else {
             window.alert('Directions request failed due to ' + status);
         }
@@ -150,20 +153,21 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }
 
   /*return an array of predicted weather for the specified array of locations and times */
-  function getWeather (array, spinner) {
+  function getWeather (array, spinner, directionsDisplay, response) {
       $.ajax({
           type: "POST",
           url:"weather.php",
           data: {array: array},
           success: function(data) {
             var weather = data;
-            plotWeather(weather);
-            document.getElementById('spin').removeChild(spinner.el);
+            plotWeather(weather, directionsDisplay, response, spinner);
           }
       });
     }
 
-    function plotWeather(weatherData) {
+    function plotWeather(weatherData, directionsDisplay, response, spinner) {
+    directionsDisplay.setDirections(response)
+      setTimeout(function(){
       function setMapOnAll(map) {
           for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(map);
@@ -212,7 +216,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       deleteMarkers();
         var weatherPoints = JSON.parse(weatherData);
         var weatherOutlook = weatherPoints.pop();
-      $("#expectedConditions").html("<div>Expected Trip Conditions: " + weatherOutlook + "</div>");
+        $(".adp-marker").eq(0).replaceWith("<img src='images/car_A.png'>");
+        $(".adp-marker").eq(0).replaceWith("<img src='images/car_B.png'>");
+      $("#expectedConditions").html("<table class='outlook'><thead><tr><td>Expected Trip Conditions</td></tr></thead>" + weatherOutlook + "</table>");
         $("table .adp-directions").before('<div data-toggle="collapse" data-target=".nonWeatherStep" class="toggleSteps">Toggle all steps</div>');
         addCollapseClass(weatherPoints[weatherPoints.length-1]["activeStep"]);
         removeCollapseClass(weatherPoints);
@@ -283,6 +289,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
               $(".adp-directions tr").eq(weather[o]["activeStep"]).removeClass("nonWeatherStep collapse");
           }
         }  
+        document.getElementById('spin').removeChild(spinner.el);
+        
+        }, 1);
     }
 }
 

@@ -8,16 +8,12 @@ body {
 }
 
 nav, .navbar {
-	height: 40px;
+	min-width: 320px;
 	margin-bottom: 0;
 	color: #F99E28;
 	background-color: #09132e;
 	border-bottom: 2px solid #F99E28;
 	padding-top: 2px;
-}
-
-.navbar-text {
-	margin: 8px 5px 0 10px;
 }
 
 .pull-left {
@@ -137,10 +133,33 @@ thead, thead tr, thead tr td{
 
 .outlook {
 	display: table;
+	text-align: center;
+}
+
+.outlook i {
+	font-size: 2em;
+}
+
+.outlook td {
+	padding: .5em .5em 0 .5em;
+}
+
+.outlook .summary {
+	font-weight: bold;
+	font-style: italic;
+	font-size: .5em;
 }
 
 .outlook td {
 	display: table-cell;
+}
+
+.outlook tbody {
+	overflow: scroll;
+}
+
+#expectedConditions, #alerts {
+	margin-top: 2%;
 }
 
 table {

@@ -66,8 +66,8 @@
 	function getWeatherOutlook ($array) {
 		$outlook = [];
 		$summary = [];
-		$outlookSummary = "<table class=\"outlook\">";
-		$alertsNotice = "<tr class=\"outlook\"><td>Alerts: </td>";
+		$outlookSummary = "<tbody><tr class=\"outlook\">";
+		$alertsNotice = "</tr></tbody></table><div id=\"alerts\"><table class='outlook'><tr class=\"outlook\"><td>Alerts</td></tr>";
 		foreach ($array as $value) {
 			if (in_array($value["predictedWeather"]["icon"], $outlook)) {
 			} else {
@@ -77,25 +77,25 @@
 		}
 		
 		for ($k = 0; $k < count($outlook); $k++) {
-			$outlookSummary .= "<tr class=\"outlook\"><td><i class=\"wi wi-forecast-io-".$outlook[$k]."\"></i></td><td>".$summary[$k]."</td></tr>";
+			$outlookSummary .= "<td><i class=\"wi wi-forecast-io-".$outlook[$k]."\"></i><div class=\"summary\">".$summary[$k]."</div></td>";
 		}
 		
 		foreach ($array as $value) {
 			if ($value["preppedAlerts"] == "<td colspan=\"2\">None</td></tr>"){
 			} else {
-				if (strpos($alertsNotice, $value["alerts"]["title"]) !== false){
+				if (strpos($alertsNotice, $value["alerts"]["uri"]) !== false){
 				} else {
-			 		$alertsNotice .= "<tr><td><a href=\"".$value["alerts"]["uri"]."\" target=\"_blank\">".$value["alerts"]["title"]."</a>";
+			 		$alertsNotice .= "<tr class=\"outlook\"><td><a href=\"".$value["alerts"]["uri"]."\" target=\"_blank\">".$value["alerts"]["title"]."</a></td></tr>";
 				}
 			}
 		}
 
-		if ($alertsNotice == "<tr class=\"outlook\"><td>Alerts: </td>") {
-			$outlookSummary .= "<tr class=\"outlook\"><td>Alerts: </td><td>None</td></tr>";
+		if ($alertsNotice == "</tr></tbody></table><div id=\"alerts\"><table class='outlook'><tr class=\"outlook\"><td>Alerts</td></tr>") {
+			$outlookSummary .= "</tr></tbody></table><div id=\"alerts\"><table class='outlook'><tr class=\"outlook\"><td>Alerts</td><td>None</td></tr>";
 		} else {
 			$outlookSummary .= $alertsNotice;
 		}
-		$outlookSummary .= "</table>";
+		$outlookSummary .= "</table></div>";
 		return $outlookSummary;
 	}
 ?>
