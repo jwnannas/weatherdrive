@@ -70,6 +70,41 @@ h1 {
 	width: 100%;
 }
 
+.buttonClicked {
+	color: #000!important;
+	font-weight: 500;
+}
+
+#buttonContainer {
+	float: left;
+}
+#radar {
+	margin: 10px 10px 10px 0;
+	padding: 8px;
+	border: none;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	font-size: 11px;
+	color: #565656;
+	box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+#traffic {
+	margin: 10px 0 10px 10px;
+	padding: 8px;
+	border: none;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	font-size: 11px;
+	color: #565656;
+	box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
+	border-right: 1px solid #eaeaea;
+}
+
 .carIcon {
 	text-align: center;
 	background-color: white;
@@ -212,6 +247,7 @@ table {
 .toggleSteps {
 	color: #0000EE;
 	font-weight: bold;
+	cursor: pointer;
 }
 
 @media screen and (max-width: 480px) {

@@ -83,7 +83,7 @@
 		foreach ($array as $value) {
 			if ($value["preppedAlerts"] == "<td colspan=\"2\">None</td></tr>"){
 			} else {
-				if (strpos($alertsNotice, $value["alerts"]["uri"]) !== false){
+				if (strpos($alertsNotice, $value["alerts"]["title"]) !== false){
 				} else {
 			 		$alertsNotice .= "<tr class=\"outlook\"><td><a href=\"".$value["alerts"]["uri"]."\" target=\"_blank\">".$value["alerts"]["title"]."</a></td></tr>";
 				}

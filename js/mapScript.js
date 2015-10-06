@@ -1,6 +1,10 @@
 var markers = [];
 var map;
 var colors = ['#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#09132e','#F99E28','#F99E28','#F99E28','#09132e','#09132e'];
+var toggleRad = false;
+var toggleTraf = false;
+var trafficOverlay;
+var openBox;
 
 var options = {
   lines: 15 // The number of lines to draw
@@ -66,6 +70,8 @@ function getDensity (densitySelection, duration) {
           }
     }
 }
+ 
+ 
 
 /*Create the Google Map*/
 function initialize() {
@@ -76,22 +82,98 @@ function initialize() {
     );
     var mapOptions = {
       center: { lat: 42.37469, lng: -71.12085},//center the map on Cambridge, MA
-      zoom: 12,
+      zoom: 5,
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
     
-    //var radarLayer = new google.maps.KmlLayer({
-    //url: '',
-   // map: map
- // });
-
     directionsDisplay.setMap(map);
   /*add event listener to search to display directions when destinations are entered*/
   var onClick = function() {
       calculateAndDisplayRoute(directionsService, directionsDisplay);
+      if (openBox != null) {
+      	openBox.close();
+      } 
     };
     document.getElementById('search').addEventListener('click', onClick);
     directionsDisplay.setPanel(document.getElementById('directions'));
+    
+    var radarButton = document.createElement('div');
+    toggleRadar(radarButton);
+    var trafficButton = document.createElement('div');
+    toggleTraffic(trafficButton);
+    var buttonContainer = document.createElement('div');
+    buttonContainer.setAttribute('id', 'buttonContainer');
+    buttonContainer.appendChild(trafficButton);
+    buttonContainer.appendChild(radarButton);
+    
+    
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonContainer);
+
+}
+
+function toggleTraffic(trafficDiv) {
+  var trafficText = document.createTextNode("Traffic");
+      trafficDiv.setAttribute('id', 'traffic');
+      trafficDiv.setAttribute('class', 'btn btn-default');
+    trafficDiv.appendChild(trafficText);
+  
+   var trafficClick = function() {
+    toggleTraffic();
+    }
+  
+  function toggleTraffic () {
+    if (toggleTraf == true) {
+      toggleTraf = false;
+        trafficOverlay.setMap(null);
+      $('#traffic').removeClass('buttonClicked');
+    } else {
+      toggleTraf = true;
+      trafficOverlay = new google.maps.TrafficLayer();
+        trafficOverlay.setMap(map);
+      $('#traffic').addClass('buttonClicked');
+    }
+    }
+
+    trafficDiv.addEventListener('click', trafficClick);
+
+} 
+
+function toggleRadar (radarDiv) {
+  aeris.config.setApiId('Uep0dHDwAmi19YagNO9Xd');
+  aeris.config.setApiSecret('F5AhwLaQeumUnDYqqgAZbA0HvGnVzcS3EKWDQart');
+  var myAerisMap = new aeris.maps.Map(map);
+    var radar = new aeris.maps.layers.Radar();
+    var precip = new aeris.maps.layers.Precip();
+    precip.setMap(myAerisMap);
+    radar.setMap(myAerisMap);
+    radar.setOpacity(0);
+    precip.setOpacity(0);
+    radar.setZIndex(-1);
+
+    var radarText = document.createTextNode("Radar");
+      radarDiv.setAttribute('id', 'radar');
+      radarDiv.setAttribute('class', 'btn btn-default');
+    radarDiv.appendChild(radarText);
+    
+    var radarClick = function() {
+    toggleRadar();
+    }
+    
+   radarDiv.addEventListener('click', radarClick);
+   
+  function toggleRadar () {
+    if (toggleRad == true) {
+      toggleRad = false;
+        radar.setOpacity(0);
+        precip.setOpacity(0);
+      $('#radar').removeClass('buttonClicked');
+    } else {
+      toggleRad = true;
+        radar.setOpacity(.6);
+        precip.setOpacity(.6);
+      $('#radar').addClass('buttonClicked');
+    }
+    }
 }
 
 /*display the route when searched*/
@@ -201,10 +283,10 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                         weatherObject["predictedWeather"]["summary"]+'</td>'+
                         '<td>App. Temp: '+(weatherObject["predictedWeather"]["apparentTemperature"]).toFixed()+'&deg; F</td><td>'+
                         (weatherObject["predictedWeather"]["windSpeed"]).toFixed()+'mph</td></tr>'+
-                        '<tr class="bottom detailWeather"><td>Precip Prob: '+ (weatherObject["predictedWeather"]["precipProbability"]).toFixed()+'&#37;</td>'+
+                        '<tr class="bottom detailWeather"><td>Precip Prob: '+ ((weatherObject["predictedWeather"]["precipProbability"])*100).toFixed()+'&#37;</td>'+
                         '<td>Humidity: '+(weatherObject["predictedWeather"]["humidity"]*100).toFixed()+'&#37;</td>'+
                         '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
-                        '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(1)+'in/hr</td>'+
+                        '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(3)+'in/hr</td>'+
                         '<td>Dew Point: '+(weatherObject["predictedWeather"]["dewPoint"]).toFixed()+'&deg;</td>'+
                         '<td>Cloud Cover: '+(weatherObject["predictedWeather"]["cloudCover"]*100).toFixed()+'&#37;</td></tr>'+
                         '<tr class="bottom alert"><td>Alerts:</td> '+ weatherObject["preppedAlerts"] +
@@ -258,6 +340,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             ,enableEventPropagation: false
         };
           var ib = new InfoBox(myOptions);
+          openBox = ib;
     
           google.maps.event.addListener(marker, 'click', function() {
               ib.setContent(this.html);

@@ -12,6 +12,7 @@
       type="image/png" 
       href="favicon.ico">
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places"></script>
+	<script type="text/javascript" src="https://cdn.aerisjs.com/aeris-gmaps.min.js"></script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
  	<script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
@@ -24,7 +25,7 @@
 				<img src="images/logoIcon.png">
 			</div>
 			<div class="navbar-text pull-right">
-					<img src="images/logo.png"></h1>
+					<img src="images/logo.png">
 			</div>
 	</nav>
 	<div id="actionPanel">
