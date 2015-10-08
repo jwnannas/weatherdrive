@@ -10,7 +10,6 @@ body {
 nav, .navbar {
 	min-width: 320px;
 	margin-bottom: 0;
-	color: #F99E28;
 	background-color: #09132e;
 	border-bottom: 2px solid #F99E28;
 	padding-top: 2px;
@@ -200,6 +199,10 @@ thead, thead tr, thead tr td{
 table {
 	background: rgb(255,255,255);
 	background: rgba(255,255,255,0.7);
+}
+
+.printWeather {
+	display: none;
 }
 
 .wi {

@@ -1,0 +1,112 @@
+@page {
+	size: letter;
+	margin: 1in;
+}
+
+#mapColumn {
+	display: none;
+}
+
+form {
+	display: none;
+}
+
+#search {
+	display: none;
+}
+
+.wi {
+	color: #F99E28;
+}
+
+.toggleSteps {
+	display: none;
+}
+
+.info thead {
+	display: table-row-group;
+}
+
+#switch {
+	display: none;
+}
+
+#density {
+	display: none;
+}
+
+.screenWeather {
+	display: none !important;
+}
+
+.weatherBoxTitle {
+	border-bottom: 1px solid #F99E28;
+}
+
+.prominentWeather {
+}
+
+.bottom td {
+	border-top: 1px solid gray !important;
+}
+
+.detailWeather {
+	text-align: left;
+}
+
+.alert {
+	text-align: left;
+}
+
+.weatherBoxTitleSpace {
+	padding-left: 25%;
+}
+
+.weatherBox table{
+	display: table;
+	font-size: small;
+	border-collapse: collapse;
+}
+
+.weatherBox td {
+	padding-right: .5em;
+}
+
+.outlook {
+	display: table;
+	text-align: center;
+}
+
+.outlook i {
+	font-size: 2em;
+}
+
+.outlook td {
+	padding: .5em .5em 0 .5em;
+}
+
+.outlook .summary {
+	font-weight: bold;
+	font-style: italic;
+	font-size: .5em;
+}
+
+.outlook td {
+	display: table-cell;
+}
+
+nav, .navbar {
+	min-width: 320px;
+	margin-bottom: 0;
+	color: #F99E28;
+	border-bottom: 2px solid #F99E28;
+	padding-top: 2px;
+}
+
+.pull-left {
+	display: inline-block;
+}
+
+.pull-right {
+	display: inline-block;
+}

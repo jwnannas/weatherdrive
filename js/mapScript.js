@@ -82,7 +82,7 @@ function initialize() {
     );
     var mapOptions = {
       center: { lat: 42.37469, lng: -71.12085},//center the map on Cambridge, MA
-      zoom: 5,
+      zoom: 12,
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
     
@@ -91,7 +91,7 @@ function initialize() {
   var onClick = function() {
       calculateAndDisplayRoute(directionsService, directionsDisplay);
       if (openBox != null) {
-      	openBox.close();
+        openBox.close();
       } 
     };
     document.getElementById('search').addEventListener('click', onClick);
@@ -188,21 +188,31 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             var spinner = new Spinner(options).spin();
             document.getElementById('spin').appendChild(spinner.el);
             var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[0].legs[0]["duration"].value/3600));
+            setPrintInformation(response);
             weatherLocations = buildLocationsArray(response, numWeatherPoints);
             getWeather(weatherLocations, spinner, directionsDisplay, response);
         } else {
-            window.alert('Directions request failed due to ' + status);
+            window.alert('Please search for a valid location');
         }
     });
 
+
+  function setPrintInformation (response) {
+    var directions = response.routes[0].legs[0];
+    var directionsPrintHeader = "Directions and weather for your trip from "+directions["start_address"]+" to "+directions["end_address"];
+    $('#directionsPrintHeader').append('<td>'+directionsPrintHeader+'</td>');
+  }
+  
   /*parse the directions to build an array of API weather requests*/
     function buildLocationsArray(response, numWeatherPoints){
-      var weatherLocations = [];
+		var weatherLocations = [];
       var directions = response.routes[0].legs[0];
+      var lat = getKeys(directions)["lat"];
+    	var lng = getKeys(directions)["lng"];
       var distance = directions.distance["value"];
       var steps = directions.steps.length;
-      weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"].H+","+directions.steps[0]["start_point"].L, activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0), distance: 0};
-      weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"].H+","+directions.steps[steps-1]["end_point"].L, activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
+      weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"][lat]+","+directions.steps[0]["start_point"][lng], activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0), distance: 0};
+      weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"][lat]+","+directions.steps[steps-1]["end_point"][lng], activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
       for (i = 1; i < numWeatherPoints-1; i++) {
           searchDistance = distance*(i/(numWeatherPoints-1));     
           locationPoint = getLocationPoint(searchDistance, directions);
@@ -211,22 +221,44 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         return weatherLocations;
     }
     
+    function getKeys (object) {
+    	var lat;
+        var lng;
+        counter = 0;
+        polyline = google.maps.geometry.encoding.decodePath(object.steps[0]["polyline"].points);
+    	      for (var key in polyline[0]) {
+                  	if (counter == 0) {
+                  		lat = key;
+                  		counter++;
+                  	} else if (counter == 1) {
+                  		lng = key;
+                  		counter++;
+                  	}
+              }
+             return {lat: lat, lng: lng}
+    }
+
     /*find the geolocation associated with a given distance along the route and return the step associated
     with with that geolocation*/
     function getLocationPoint (searchDistance, directions) {
         var activeStep = 0;
         var cumulativeDistance = 0;
         var locationArray = [];
+       	var lat = getKeys(directions)["lat"];
+        var lng = getKeys(directions)["lng"];
+  
         for (j = 0; cumulativeDistance <= searchDistance; j++) {
             string = directions.steps[j]["polyline"].points;
             polyline = google.maps.geometry.encoding.decodePath(string);
+            
+       
             for (k = 1; k <= polyline.length-1; k++) {
               if (cumulativeDistance <= searchDistance) {
                   locationArray[0] = polyline[k-1];
                   locationArray[1] = polyline[k];
                   currentDistance = google.maps.geometry.spherical.computeLength(locationArray);
                   cumulativeDistance += currentDistance;
-                  activeLocation = polyline[k].H+","+polyline[k].L;
+                  activeLocation = polyline[k][lat]+","+polyline[k][lng];
               }
               activeStep = j;
             }
@@ -273,9 +305,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       }  
     
       function makeWeatherWindow(weatherObject) {
-          var weatherWindow = "<div class='weatherBox'><div class='weatherInfoContainer'><div class='weatherBoxTitle'><b>"+weatherObject["locationName"]+
-                            '</b><br>'+'<small>ETA: <i>'+weatherObject["convertedLocationTime"]+
-                            '<span class="weatherBoxTitleSpace"></span><i>'+weatherObject["distance"]+'mi</i></small>'+ 
+          var weatherWindow = "<div class='weatherBox'><div class='weatherInfoContainer'><div class='weatherBoxTitle'><span class='screenWeather'><b>"+weatherObject["locationName"]+
+                            '</b><br></span>'+'<small><span class="screenWeather">ETA: </span><span class="printWeather">Weather @ </span><i>'+weatherObject["convertedLocationTime"]+
+                            '<span class="weatherBoxTitleSpace"></span><i class="screenWeather">'+weatherObject["distance"]+'mi</i></small>'+ 
                             '</div><table><tr class="prominentWeather">'+ 
                         '<td><i class="wi wi-forecast-io-' + weatherObject["predictedWeather"]["icon"] + '"></i></td>'+
                         '<td><b>' + (weatherObject["predictedWeather"]["temperature"]).toFixed() + '&deg;</b></td>'+
@@ -286,7 +318,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                         '<tr class="bottom detailWeather"><td>Precip Prob: '+ ((weatherObject["predictedWeather"]["precipProbability"])*100).toFixed()+'&#37;</td>'+
                         '<td>Humidity: '+(weatherObject["predictedWeather"]["humidity"]*100).toFixed()+'&#37;</td>'+
                         '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
-                        '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(3)+'in/hr</td>'+
+                        '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(2)+'in/hr</td>'+
                         '<td>Dew Point: '+(weatherObject["predictedWeather"]["dewPoint"]).toFixed()+'&deg;</td>'+
                         '<td>Cloud Cover: '+(weatherObject["predictedWeather"]["cloudCover"]*100).toFixed()+'&#37;</td></tr>'+
                         '<tr class="bottom alert"><td>Alerts:</td> '+ weatherObject["preppedAlerts"] +
@@ -300,14 +332,15 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         var weatherOutlook = weatherPoints.pop();
         $(".adp-marker").eq(0).replaceWith("<img src='images/car_A.png'>");
         $(".adp-marker").eq(0).replaceWith("<img src='images/car_B.png'>");
-      $("#expectedConditions").html("<table class='outlook'><thead><tr><td>Expected Trip Conditions</td></tr></thead>" + weatherOutlook + "</table>");
+        $("#expectedConditions").html("<table class='outlook'><thead><tr><td>Expected Trip Conditions</td></tr></thead>" + weatherOutlook + "</table>");
         $("table .adp-directions").before('<div data-toggle="collapse" data-target=".nonWeatherStep" class="toggleSteps">Toggle all steps</div>');
         addCollapseClass(weatherPoints[weatherPoints.length-1]["activeStep"]);
         removeCollapseClass(weatherPoints);
         $(".adp-directions tr").eq(0).after(getWeatherRow(weatherPoints[0]));
         for (m = 0; m < weatherPoints.length; m++) {
           if (m > 0 && m < weatherPoints.length-1) {
-            $(".adp-directions tr").eq(Number(weatherPoints[m]["activeStep"])+m).after(getWeatherRow(weatherPoints[m]));
+            $(".adp-directions > tbody > tr").eq(Number(weatherPoints[m]["activeStep"])+m).after(getWeatherRow(weatherPoints[m]));
+            $(".adp-directions > tbody > tr").eq(Number(weatherPoints[m]["activeStep"])+m).append();
           }
           var lat = Number(weatherPoints[m]["latitude"]);
           var lng = Number(weatherPoints[m]["longitude"]);
@@ -347,15 +380,16 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
               ib.open(map, this);
           });
       }
-        $(".adp-directions tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])+weatherPoints.length-1).after(getWeatherRow(weatherPoints[weatherPoints.length-1]));
+        $(".adp-directions > tbody > tr").eq(Number(weatherPoints[weatherPoints.length-1]["activeStep"])+weatherPoints.length-1).after(getWeatherRow(weatherPoints[weatherPoints.length-1]));
         showMarkers();
       
         function getWeatherRow(weather) {
           var trimmedDate = weather["convertedLocationTime"];
           trimmedDate = trimmedDate.substring(0, trimmedDate.indexOf('T')+1);
-          var weatherRow = "<tr><td></td><td>"+'<i class="wi wi-forecast-io-' + weather["predictedWeather"]["icon"] + '"></i></td>'+
-                         '<td><b>'+(weather["predictedWeather"]["temperature"]).toFixed() + '&deg; F</b>'+
-                         ' <i>'+weather["predictedWeather"]["summary"]+'</i> &#64; ' + trimmedDate +
+          var weatherRow = "<tr><td></td><td>"+'<i class="wi wi-forecast-io-' + weather["predictedWeather"]["icon"] + ' screenWeather"></i></td>'+
+                         '<td><b class="screenWeather">'+(weather["predictedWeather"]["temperature"]).toFixed() + '&deg; F</b>'+
+                         ' <i class="screenWeather">'+weather["predictedWeather"]["summary"]+'</i> <span class="screenWeather">&#64; ' + trimmedDate + "</span>" +
+                         '<table class="printWeather"><tr><td>'+makeWeatherWindow(weather)+'</td></tr></table>'+   
                          '</td></tr>';
                   
           return weatherRow;  
@@ -369,7 +403,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       
         function removeCollapseClass (weather) {
           for (o=0; o <= weather.length-1; o++) {
-              $(".adp-directions tr").eq(weather[o]["activeStep"]).removeClass("nonWeatherStep collapse");
+              $(".adp-directions > tbody > tr").eq(weather[o]["activeStep"]).removeClass("nonWeatherStep collapse");
           }
         }  
         document.getElementById('spin').removeChild(spinner.el);

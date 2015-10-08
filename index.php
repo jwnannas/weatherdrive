@@ -4,13 +4,12 @@
 	<title>WeatherDrive</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" media="screen" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" media="screen" type="text/css" href="css/style.css">
+	<link rel="stylesheet" media="print" type="text/css" href="css/print.css">
 	<link rel="stylesheet" href="css/weather-icons-wind.min.css">
 	<link rel="stylesheet" href="css/weather-icons.min.css">
-	<link rel="icon" 
-      type="image/png" 
-      href="favicon.ico">
+	<link rel="icon" type="image/png" href="favicon.ico">
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places"></script>
 	<script type="text/javascript" src="https://cdn.aerisjs.com/aeris-gmaps.min.js"></script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -60,7 +59,7 @@
 									<br>
 									<div class="form-group">
 									<select class= "form-control" name="density" id="density">
-										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Select Weather Point Density</option>
+										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Select # Weather Points (More = more time)</option>
 										<option value="low">Low</option>
 										<option value="medium">Medium</option>
 										<option value="high">High</option>
@@ -71,6 +70,7 @@
 								</form>
 							</td>
 						</tr>
+						<tr id="directionsPrintHeader" class="printWeather"></tr>
 						<tr>
 							<td id="expectedConditions"></td>
 						</tr>
