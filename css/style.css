@@ -22,6 +22,47 @@ nav, .navbar {
 .pull-right {
 	margin: 17px 10px 0 0;
 }
+
+.hideControls {
+	display: none;
+}
+
+#controlRow td div {
+	margin-top: 2%;
+	border-top: 1px solid #C0C0C0;
+	border-right: 1px solid #C0C0C0;
+	border-left:	1px solid #C0C0C0;
+}
+
+#controlRow table {
+		background-color: #EEE;
+}
+
+#controlRow tr {
+	width: 100%;
+}
+
+#print:hover, #email:hover {
+	cursor: pointer;
+}
+
+#print, #email {
+	text-align: right;
+}
+
+#print {
+	padding-right: 5px;
+}
+
+#email {
+	padding-left: 0;
+}
+
+#adp-placemark {
+	margin-top: 0px;
+	border-top: none;
+}
+
 h1 {
 	margin: 0;
 }
@@ -77,6 +118,7 @@ h1 {
 #buttonContainer {
 	float: left;
 }
+
 #radar {
 	margin: 10px 10px 10px 0;
 	padding: 8px;
@@ -160,7 +202,6 @@ thead, thead tr, thead tr td{
 	width: 100%;
 }
 
-
 .adp-directions {
 	display: table;
 }
@@ -235,6 +276,10 @@ table {
 }
 
 .alert {
+	text-align: left;
+}
+
+.directionsResult {
 	text-align: left;
 }
 

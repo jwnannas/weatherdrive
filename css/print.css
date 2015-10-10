@@ -1,6 +1,6 @@
 @page {
 	size: letter;
-	margin: 1in;
+	margin: .5in;
 }
 
 #mapColumn {
@@ -12,6 +12,10 @@ form {
 }
 
 #search {
+	display: none;
+}
+
+#controlRow {
 	display: none;
 }
 
@@ -93,6 +97,15 @@ form {
 
 .outlook td {
 	display: table-cell;
+}
+
+#depart, #arrive {
+	padding-left: 1em;
+}
+
+#expectedConditions {
+	background-color: #EEE;
+	border: 1px solid #C0C0C0;
 }
 
 nav, .navbar {

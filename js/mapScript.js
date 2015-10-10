@@ -41,6 +41,30 @@ var switchClick = function() {
 
 document.getElementById('switch').addEventListener('click', switchClick);
 
+document.getElementById('print').addEventListener('click', function () {
+	window.print();
+});
+
+document.getElementById('email').addEventListener('click', function () {
+	var email = prompt("Enter email to send to", "");
+	if (email != null) {
+		origin = document.getElementById('origin').value;
+		destination = document.getElementById('destination').value;
+		density = document.getElementById('density').value;
+		var url = /http(.*)weatherdrive\//g.exec(document.URL)[0];
+		emailURL =  url + '?origin=' + origin + '&destination=' + destination + '&density=' + density;
+	 	$.ajax({
+          	type: "POST",
+          	url:"mail.php",
+         	data: {email: email, weatherDriveURL: emailURL},
+          	success: function(data) {
+            	window.alert('Your searched route has been sent');
+          	}
+        });
+    }
+});
+
+
 function switchBoxes (a, b) {
   var holder = a.val();
   a.val(b.val());
@@ -108,8 +132,27 @@ function initialize() {
     
     
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonContainer);
+  
+  checkURL();
 
+	function checkURL () {
+		query = document.URL;
+		if (query.indexOf('origin')>0&&query.indexOf('destination')>0&&query.indexOf('density')>0) {
+			var origin = /origin=(.*)&destination/g.exec(query)[1];
+			var destination = /destination=(.*)&density/g.exec(query)[1];
+			var density = /density=(.*)/g.exec(query)[1];
+			fillForm(origin, destination, density);
+		}
+	}
+
+	function fillForm (a, b, c) {
+		document.getElementById('origin').value = a;
+		document.getElementById('destination').value = b;
+		document.getElementById('density').value = c;
+		document.getElementById('search').click();
+	}
 }
+
 
 function toggleTraffic(trafficDiv) {
   var trafficText = document.createTextNode("Traffic");
@@ -199,7 +242,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 
   function setPrintInformation (response) {
     var directions = response.routes[0].legs[0];
-    var directionsPrintHeader = "Directions and weather for your trip from "+directions["start_address"]+" to "+directions["end_address"];
+    var directionsPrintHeader = "<table><tr><td><img src='images/car_A.png'></td><td>"+directions["start_address"]+"</td><td><small><i><span id='depart'> Departing:</span></i></small></td></tr><tr><td><img src='images/car_B.png'></td><td>"+directions["end_address"]+"</td><td><small><i><span id='arrive'> Arriving: </span></i></small></td></tr></table>";
     $('#directionsPrintHeader').append('<td>'+directionsPrintHeader+'</td>');
   }
   
@@ -330,6 +373,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       deleteMarkers();
         var weatherPoints = JSON.parse(weatherData);
         var weatherOutlook = weatherPoints.pop();
+        $("#depart").append(weatherPoints[0]["convertedLocationTime"]);
+        $("#arrive").append(weatherPoints[weatherPoints.length-1]["convertedLocationTime"]);
+        $("#controlRow").removeClass('hideControls');
         $(".adp-marker").eq(0).replaceWith("<img src='images/car_A.png'>");
         $(".adp-marker").eq(0).replaceWith("<img src='images/car_B.png'>");
         $("#expectedConditions").html("<table class='outlook'><thead><tr><td>Expected Trip Conditions</td></tr></thead>" + weatherOutlook + "</table>");

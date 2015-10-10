@@ -59,7 +59,7 @@
 									<br>
 									<div class="form-group">
 									<select class= "form-control" name="density" id="density">
-										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Select # Weather Points (More = more time)</option>
+										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden"># Weather Points (higher = more time)</option>
 										<option value="low">Low</option>
 										<option value="medium">Medium</option>
 										<option value="high">High</option>
@@ -73,6 +73,19 @@
 						<tr id="directionsPrintHeader" class="printWeather"></tr>
 						<tr>
 							<td id="expectedConditions"></td>
+						</tr>
+						<tr id="controlRow" class="hideControls">
+							<td>
+								<div>
+									<table class="outlook">
+										<tr class="outlook"> 
+											<td class='directionsResult'><b>Weather / Directions Results</b></td>
+											<td id="print"><img src="images/printer.png"></td>
+											<td id="email"><img src="images/email.png"></td>
+										</tr>
+									</table>
+								</div>
+							</td>
 						</tr>
 					</thead>
 					<tbody id="directionsTbody">
