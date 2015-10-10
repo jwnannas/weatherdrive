@@ -35,6 +35,10 @@ $('.info').slimScroll({
   height: '100%',
 });
 
+if (navigator.appVersion.indexOf("Android")!=-1) {
+	$('#print').addClass('hideControls');
+}
+
 var switchClick = function() {
   switchBoxes($('#origin'), $('#destination'));   
 }
