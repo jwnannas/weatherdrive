@@ -24,7 +24,7 @@ nav, .navbar {
 }
 
 .hideControls {
-	display: none;
+	display: none !important;
 }
 
 #controlRow td div {
