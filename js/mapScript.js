@@ -55,7 +55,7 @@ document.getElementById('email').addEventListener('click', function () {
 		origin = document.getElementById('origin').value;
 		destination = document.getElementById('destination').value;
 		density = document.getElementById('density').value;
-		var url = /http(.*)weatherdrive\//g.exec(document.URL)[0];
+		var url = "http://www.weatherdrive.org/";
 		emailURL =  url + '?origin=' + origin + '&destination=' + destination + '&density=' + density;
 	 	$.ajax({
           	type: "POST",
