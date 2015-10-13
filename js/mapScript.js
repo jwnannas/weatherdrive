@@ -62,10 +62,10 @@ document.getElementById('print').addEventListener('click', function () {
 document.getElementById('email').addEventListener('click', function () {
   var email = prompt("Enter email to send to", "");
   if (email != null) {
-    origin = document.getElementById('origin').value;
-    destination = document.getElementById('destination').value;
+    origin = document.getElementById('origin').value.replace(/ /g,"");
+    destination = document.getElementById('destination').value.replace(/ /g,"");
     density = document.getElementById('density').value;
-    time = document.getElementById('time').value;
+    time = new Date($('#dateTime input').val()).getTime()/1000;
     var url = "http://www.weatherdrive.org/";
     emailURL =  url + '?origin=' + origin + '&destination=' + destination + '&density=' + density + '&time=' + time;
     $.ajax({
@@ -155,9 +155,17 @@ function initialize() {
     if (query.indexOf('origin')>0&&query.indexOf('destination')>0&&query.indexOf('density')>0&&query.indexOf('time')>0) {
       var origin = /origin=(.*)&destination/g.exec(query)[1];
       var destination = /destination=(.*)&density/g.exec(query)[1];
-      var density = /density=(.*)/g.exec(query)[1];
-      var time = /time=(.*)/g.exec(query)[1];
-      fillForm(origin, destination, density, time);
+      var density = /density=(.*)&time/g.exec(query)[1];
+      var dateTime = getDateTime(new Date(/time=(.*)/g.exec(query)[1]*1000));
+      fillForm(origin, destination, density, dateTime);
+    }
+
+    function getDateTime (timestamp) {
+        var date = timestamp.toLocaleDateString();
+        var time = timestamp.toLocaleTimeString();
+        var dateTime = date + " " + time;
+        var preppedDateTime = dateTime.replace(/:00 /g," ");
+        return preppedDateTime;
     }
   }
 
@@ -269,12 +277,12 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       var requestedTime = new Date($('#dateTime input').val()).getTime()/1000;
     var weatherLocations = [];
       var directions = response.routes[0].legs[0];
-      var lat = getKeys(directions)["lat"];
-      var lng = getKeys(directions)["lng"];
       var distance = directions.distance["value"];
       var steps = directions.steps.length;
-      weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"][lat]+","+directions.steps[0]["start_point"][lng], activeStep: 0, locationName: directions["start_address"], locationTime: Number(requestedTime), distance: 0};
-      weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"][lat]+","+directions.steps[steps-1]["end_point"][lng], activeStep: steps-1, locationName: directions["end_address"], locationTime: Number(requestedTime)+Number(directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
+       var start = directions.steps[0]["start_point"].toString();
+      var end = directions.steps[steps-1]["end_point"].toString();
+      weatherLocations[0] = {activeLocation: (start.substring(1, start.indexOf(')'))).replace(/ /g, ""), activeStep: 0, locationName: directions["start_address"], locationTime: Number(requestedTime), distance: 0};
+      weatherLocations[numWeatherPoints-1] = {activeLocation: (end.substring(1, end.indexOf(')'))).replace(/ /g, "") , activeStep: steps-1, locationName: directions["end_address"], locationTime: Number(requestedTime)+Number(directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
       for (i = 1; i < numWeatherPoints-1; i++) {
           searchDistance = distance*(i/(numWeatherPoints-1));     
           locationPoint = getLocationPoint(searchDistance, directions, requestedTime);
@@ -283,31 +291,12 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         return weatherLocations;
     }
     
-    function getKeys (object) {
-      var lat;
-        var lng;
-        counter = 0;
-        polyline = google.maps.geometry.encoding.decodePath(object.steps[0]["polyline"].points);
-            for (var key in polyline[0]) {
-                    if (counter == 0) {
-                      lat = key;
-                      counter++;
-                    } else if (counter == 1) {
-                      lng = key;
-                      counter++;
-                    }
-              }
-             return {lat: lat, lng: lng}
-    }
-
     /*find the geolocation associated with a given distance along the route and return the step associated
     with with that geolocation*/
     function getLocationPoint (searchDistance, directions, timeReference) {
         var activeStep = 0;
         var cumulativeDistance = 0;
         var locationArray = [];
-        var lat = getKeys(directions)["lat"];
-        var lng = getKeys(directions)["lng"];
   
         for (j = 0; cumulativeDistance <= searchDistance; j++) {
             string = directions.steps[j]["polyline"].points;
@@ -320,7 +309,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
                   locationArray[1] = polyline[k];
                   currentDistance = google.maps.geometry.spherical.computeLength(locationArray);
                   cumulativeDistance += currentDistance;
-                  activeLocation = polyline[k][lat]+","+polyline[k][lng];
+
+                  activeLocation = (polyline[k].toString().substring(1, polyline[k].toString().indexOf(')')).replace(/ /g, ""));
               }
               activeStep = j;
             }
