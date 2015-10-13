@@ -5,6 +5,7 @@ var toggleRad = false;
 var toggleTraf = false;
 var trafficOverlay;
 var openBox;
+var passedTime = "";
 
 var options = {
   lines: 15 // The number of lines to draw
@@ -157,6 +158,7 @@ function initialize() {
       var destination = /destination=(.*)&density/g.exec(query)[1];
       var density = /density=(.*)&time/g.exec(query)[1];
       var dateTime = getDateTime(new Date(/time=(.*)/g.exec(query)[1]*1000));
+      passedTime = /time=(.*)/g.exec(query)[1];
       fillForm(origin, destination, density, dateTime);
     }
 
@@ -274,7 +276,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   
   /*parse the directions to build an array of API weather requests*/
     function buildLocationsArray(response, numWeatherPoints){
-      var requestedTime = new Date($('#dateTime input').val()).getTime()/1000;
+      var requestedTime = getRequestedTime();
     var weatherLocations = [];
       var directions = response.routes[0].legs[0];
       var distance = directions.distance["value"];
@@ -289,6 +291,16 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
           weatherLocations[i] = locationPoint;
         }
         return weatherLocations;
+    }
+
+    function getRequestedTime () {
+    	console.log(passedTime);
+    	if (passedTime != '') {
+    		return passedTime;
+    	} else {
+    		var stamp = new Date($('#dateTime input').val()).getTime()/1000;
+    		return stamp;
+    	}
     }
     
     /*find the geolocation associated with a given distance along the route and return the step associated
@@ -403,6 +415,8 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       deleteMarkers();
         var weatherPoints = JSON.parse(weatherData);
         var weatherOutlook = weatherPoints.pop();
+        passedTime = '';
+        console.log(passedTime);
         $("#depart").append(weatherPoints[0]["convertedLocationTime"]);
         $("#arrive").append(weatherPoints[weatherPoints.length-1]["convertedLocationTime"]);
         $("#controlRow").removeClass('hideControls');
