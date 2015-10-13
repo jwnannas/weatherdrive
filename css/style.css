@@ -173,6 +173,7 @@ h1 {
 #switch {
 	text-align: center;
 	background-color: white;
+	cursor: pointer;
 }
 
 .origin {
@@ -189,8 +190,12 @@ table {
 	padding: 1%;
 }
 
-thead, thead tr, thead tr td{
+#searchHeader, #searchHeader>tr, #searchHeader>tr>td{
 	display: block;
+}
+
+#dateTime {
+	margin-bottom: 15px;
 }
 
 .info {
@@ -243,7 +248,7 @@ table {
 }
 
 .printWeather {
-	display: none;
+	display: none !important;
 }
 
 .wi {

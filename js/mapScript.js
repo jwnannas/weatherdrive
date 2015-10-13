@@ -29,6 +29,16 @@ var options = {
   , position: 'absolute' // Element positioning
 }
 
+  $(function () {
+    var dateLimit = moment.unix((Date.now() / 1000 | 0) + 2592000);
+    var currentDate = Date.now();
+  $('#dateTime').datetimepicker({
+    defaultDate: currentDate,
+      maxDate: dateLimit,
+      minDate: currentDate
+         });
+    });
+
 $('.info').slimScroll({
   color: '#6C6C6C',
   size: '10px',
@@ -36,7 +46,7 @@ $('.info').slimScroll({
 });
 
 if (navigator.appVersion.indexOf("Android")!=-1) {
-	$('#print').addClass('hideControls');
+  $('#print').addClass('hideControls');
 }
 
 var switchClick = function() {
@@ -46,24 +56,25 @@ var switchClick = function() {
 document.getElementById('switch').addEventListener('click', switchClick);
 
 document.getElementById('print').addEventListener('click', function () {
-	window.print();
+  window.print();
 });
 
 document.getElementById('email').addEventListener('click', function () {
-	var email = prompt("Enter email to send to", "");
-	if (email != null) {
-		origin = document.getElementById('origin').value;
-		destination = document.getElementById('destination').value;
-		density = document.getElementById('density').value;
-		var url = "http://www.weatherdrive.org/";
-		emailURL =  url + '?origin=' + origin + '&destination=' + destination + '&density=' + density;
-	 	$.ajax({
-          	type: "POST",
-          	url:"mail.php",
-         	data: {email: email, weatherDriveURL: emailURL},
-          	success: function(data) {
-            	window.alert('Your searched route has been sent');
-          	}
+  var email = prompt("Enter email to send to", "");
+  if (email != null) {
+    origin = document.getElementById('origin').value;
+    destination = document.getElementById('destination').value;
+    density = document.getElementById('density').value;
+    time = document.getElementById('time').value;
+    var url = "http://www.weatherdrive.org/";
+    emailURL =  url + '?origin=' + origin + '&destination=' + destination + '&density=' + density + '&time=' + time;
+    $.ajax({
+            type: "POST",
+            url:"mail.php",
+          data: {email: email, weatherDriveURL: emailURL},
+            success: function(data) {
+              window.alert('Your searched route has been sent');
+            }
         });
     }
 });
@@ -77,7 +88,7 @@ function switchBoxes (a, b) {
 
 function getDensity (densitySelection, duration) {
   switch (densitySelection) {
-      case 'Select Weather Point Density':
+      case 'Forecast frequency (higher = more time)':
           $('#density').val("medium");
           return 5;
       case 'Low':
@@ -139,22 +150,24 @@ function initialize() {
   
   checkURL();
 
-	function checkURL () {
-		query = document.URL;
-		if (query.indexOf('origin')>0&&query.indexOf('destination')>0&&query.indexOf('density')>0) {
-			var origin = /origin=(.*)&destination/g.exec(query)[1];
-			var destination = /destination=(.*)&density/g.exec(query)[1];
-			var density = /density=(.*)/g.exec(query)[1];
-			fillForm(origin, destination, density);
-		}
-	}
+  function checkURL () {
+    query = document.URL;
+    if (query.indexOf('origin')>0&&query.indexOf('destination')>0&&query.indexOf('density')>0&&query.indexOf('time')>0) {
+      var origin = /origin=(.*)&destination/g.exec(query)[1];
+      var destination = /destination=(.*)&density/g.exec(query)[1];
+      var density = /density=(.*)/g.exec(query)[1];
+      var time = /time=(.*)/g.exec(query)[1];
+      fillForm(origin, destination, density, time);
+    }
+  }
 
-	function fillForm (a, b, c) {
-		document.getElementById('origin').value = a;
-		document.getElementById('destination').value = b;
-		document.getElementById('density').value = c;
-		document.getElementById('search').click();
-	}
+  function fillForm (a, b, c, d) {
+    document.getElementById('origin').value = a;
+    document.getElementById('destination').value = b;
+    document.getElementById('density').value = c;
+    document.getElementById('time').value = d;
+    document.getElementById('search').click();
+  }
 }
 
 
@@ -247,51 +260,53 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   function setPrintInformation (response) {
     var directions = response.routes[0].legs[0];
     var directionsPrintHeader = "<table><tr><td><img src='images/car_A.png'></td><td>"+directions["start_address"]+"</td><td><small><i><span id='depart'> Departing:</span></i></small></td></tr><tr><td><img src='images/car_B.png'></td><td>"+directions["end_address"]+"</td><td><small><i><span id='arrive'> Arriving: </span></i></small></td></tr></table>";
+    $('#directionsPrintHeader').empty();
     $('#directionsPrintHeader').append('<td>'+directionsPrintHeader+'</td>');
   }
   
   /*parse the directions to build an array of API weather requests*/
     function buildLocationsArray(response, numWeatherPoints){
-		var weatherLocations = [];
+      var requestedTime = new Date($('#dateTime input').val()).getTime()/1000;
+    var weatherLocations = [];
       var directions = response.routes[0].legs[0];
       var lat = getKeys(directions)["lat"];
-    	var lng = getKeys(directions)["lng"];
+      var lng = getKeys(directions)["lng"];
       var distance = directions.distance["value"];
       var steps = directions.steps.length;
-      weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"][lat]+","+directions.steps[0]["start_point"][lng], activeStep: 0, locationName: directions["start_address"], locationTime: (Date.now() / 1000 | 0), distance: 0};
-      weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"][lat]+","+directions.steps[steps-1]["end_point"][lng], activeStep: steps-1, locationName: directions["end_address"], locationTime: ((Date.now() / 1000 | 0)+directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
+      weatherLocations[0] = {activeLocation: directions.steps[0]["start_point"][lat]+","+directions.steps[0]["start_point"][lng], activeStep: 0, locationName: directions["start_address"], locationTime: Number(requestedTime), distance: 0};
+      weatherLocations[numWeatherPoints-1] = {activeLocation: directions.steps[steps-1]["end_point"][lat]+","+directions.steps[steps-1]["end_point"][lng], activeStep: steps-1, locationName: directions["end_address"], locationTime: Number(requestedTime)+Number(directions["duration"].value), distance: (directions["distance"].value * 0.000621371).toFixed()};
       for (i = 1; i < numWeatherPoints-1; i++) {
           searchDistance = distance*(i/(numWeatherPoints-1));     
-          locationPoint = getLocationPoint(searchDistance, directions);
+          locationPoint = getLocationPoint(searchDistance, directions, requestedTime);
           weatherLocations[i] = locationPoint;
         }
         return weatherLocations;
     }
     
     function getKeys (object) {
-    	var lat;
+      var lat;
         var lng;
         counter = 0;
         polyline = google.maps.geometry.encoding.decodePath(object.steps[0]["polyline"].points);
-    	      for (var key in polyline[0]) {
-                  	if (counter == 0) {
-                  		lat = key;
-                  		counter++;
-                  	} else if (counter == 1) {
-                  		lng = key;
-                  		counter++;
-                  	}
+            for (var key in polyline[0]) {
+                    if (counter == 0) {
+                      lat = key;
+                      counter++;
+                    } else if (counter == 1) {
+                      lng = key;
+                      counter++;
+                    }
               }
              return {lat: lat, lng: lng}
     }
 
     /*find the geolocation associated with a given distance along the route and return the step associated
     with with that geolocation*/
-    function getLocationPoint (searchDistance, directions) {
+    function getLocationPoint (searchDistance, directions, timeReference) {
         var activeStep = 0;
         var cumulativeDistance = 0;
         var locationArray = [];
-       	var lat = getKeys(directions)["lat"];
+        var lat = getKeys(directions)["lat"];
         var lng = getKeys(directions)["lng"];
   
         for (j = 0; cumulativeDistance <= searchDistance; j++) {
@@ -310,7 +325,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
               activeStep = j;
             }
         }
-        return {activeLocation: activeLocation, activeStep: activeStep, locationName: "", locationTime: "", distance: (cumulativeDistance * 0.000621371).toFixed()};
+        return {activeLocation: activeLocation, activeStep: activeStep, locationName: "", locationTime: "", distance: (cumulativeDistance * 0.000621371).toFixed(), timeReference: timeReference};
     }
 
   /*return an array of predicted weather for the specified array of locations and times */
@@ -352,25 +367,46 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
       }  
     
       function makeWeatherWindow(weatherObject) {
+      
+        var boxItems = ["icon", "temperature", "windBearing", "summary", "apparentTemperature", "windSpeed", "precipProbability", "precipIntensity", "dewPoint", "cloudCover"];
+        checkUndefinedWeather(weatherObject, boxItems);
+        
           var weatherWindow = "<div class='weatherBox'><div class='weatherInfoContainer'><div class='weatherBoxTitle'><span class='screenWeather'><b>"+weatherObject["locationName"]+
                             '</b><br></span>'+'<small><span class="screenWeather">ETA: </span><span class="printWeather">Weather @ </span><i>'+weatherObject["convertedLocationTime"]+
                             '<span class="weatherBoxTitleSpace"></span><i class="screenWeather">'+weatherObject["distance"]+'mi</i></small>'+ 
                             '</div><table><tr class="prominentWeather">'+ 
                         '<td><i class="wi wi-forecast-io-' + weatherObject["predictedWeather"]["icon"] + '"></i></td>'+
-                        '<td><b>' + (weatherObject["predictedWeather"]["temperature"]).toFixed() + '&deg;</b></td>'+
+                        '<td><b>' + formatWeatherNumber(weatherObject["predictedWeather"]["temperature"], 1, 0, '&deg;')+ '</b></td>'+
                         '<td><i class="wi wi-wind from-' + weatherObject["predictedWeather"]["windBearing"] + '-deg"></i></td><tr><td>'+
                         weatherObject["predictedWeather"]["summary"]+'</td>'+
-                        '<td>App. Temp: '+(weatherObject["predictedWeather"]["apparentTemperature"]).toFixed()+'&deg; F</td><td>'+
-                        (weatherObject["predictedWeather"]["windSpeed"]).toFixed()+'mph</td></tr>'+
-                        '<tr class="bottom detailWeather"><td>Precip Prob: '+ ((weatherObject["predictedWeather"]["precipProbability"])*100).toFixed()+'&#37;</td>'+
-                        '<td>Humidity: '+(weatherObject["predictedWeather"]["humidity"]*100).toFixed()+'&#37;</td>'+
+                        '<td>App. Temp: '+formatWeatherNumber(weatherObject["predictedWeather"]["apparentTemperature"], 1, 0, '&deg; F')+'</td><td>'+
+                        formatWeatherNumber(weatherObject["predictedWeather"]["windSpeed"], 1, 0, 'mph')+'</td></tr>'+
+                        '<tr class="bottom detailWeather"><td>Precip Prob: '+ formatWeatherNumber(weatherObject["predictedWeather"]["precipProbability"], 100, 0, '&#37;')+'</td>'+
+                        '<td>Humidity: '+formatWeatherNumber(weatherObject["predictedWeather"]["humidity"], 100, 0, '&#37;')+'</td>'+
                         '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
-                        '<tr class="detailWeather"><td>Precip Intensity: '+(weatherObject["predictedWeather"]["precipIntensity"]).toFixed(2)+'in/hr</td>'+
-                        '<td>Dew Point: '+(weatherObject["predictedWeather"]["dewPoint"]).toFixed()+'&deg;</td>'+
-                        '<td>Cloud Cover: '+(weatherObject["predictedWeather"]["cloudCover"]*100).toFixed()+'&#37;</td></tr>'+
+                        '<tr class="detailWeather"><td>Precip Intensity: '+formatWeatherNumber(weatherObject["predictedWeather"]["precipIntensity"], 1, 2, 'in/hr')+'</td>'+
+                        '<td>Dew Point: '+formatWeatherNumber(weatherObject["predictedWeather"]["dewPoint"], 1, 0, '&deg;')+'</td>'+
+                        '<td>Cloud Cover: '+formatWeatherNumber(weatherObject["predictedWeather"]["cloudCover"], 100, 0, '&#37;')+'</td></tr>'+
                         '<tr class="bottom alert"><td>Alerts:</td> '+ weatherObject["preppedAlerts"] +
                         '</table></div></div>';
 
+        function formatWeatherNumber (number, multiplier, decimals, label) {
+          if (typeof number != 'number') {
+            return number;
+          } else {
+            var formattedNumber = (number * multiplier).toFixed(decimals);
+            return formattedNumber + label;
+          }
+        }
+        
+        function checkUndefinedWeather(object, items) {
+          for (p=0; p < items.length; p++) {
+            if (!(items[p] in object["predictedWeather"])) {
+              object["predictedWeather"][items[p]] = "N/A";
+            } 
+          }
+        }
+  
         return weatherWindow
       }
   

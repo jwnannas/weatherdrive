@@ -39,7 +39,7 @@
 			$directionsObject = file_get_contents("https://maps.googleapis.com/maps/api/directions/json?origin=".$array[0]["activeLocation"]."&destination=".$array[$j]["activeLocation"]."&key=".$directionsKey);
 			$directionsSummary = json_decode($directionsObject, true);
 			$locationName = $directionsSummary["routes"][0]["legs"][0]["end_address"];
-			$locationTime = time() + $directionsSummary["routes"][0]["legs"][0]["duration"]["value"];
+			$locationTime = $array[$j]["timeReference"] + $directionsSummary["routes"][0]["legs"][0]["duration"]["value"];
 			$array[$j]["locationName"] = $locationName;
 			$array[$j]["locationTime"] = $locationTime;
 		}
@@ -98,4 +98,5 @@
 		$outlookSummary .= "</table></div>";
 		return $outlookSummary;
 	}
+	
 ?>

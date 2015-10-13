@@ -10,13 +10,17 @@
 	<link rel="stylesheet" href="css/weather-icons-wind.min.css">
 	<link rel="stylesheet" href="css/weather-icons.min.css">
 	<link rel="icon" type="image/png" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap-datetimepicker.css">
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCs1a-vtgkgXnsIdVGldol_v5IrRJHcpR4&libraries=geometry,places"></script>
 	<script type="text/javascript" src="https://cdn.aerisjs.com/aeris-gmaps.min.js"></script>
  	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+ 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.min.js"></script>
  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
  	<script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
  	<script src="libraries/infobox.js" type="text/javascript"></script>
  	<script src="libraries/spin.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://momentjs.com/downloads/moment.min.js"></script>
+    <script type="text/javascript" src="libraries/bootstrap-datetimepicker.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -31,7 +35,7 @@
 		<div id="actionRow" class="row">
 			<div id="infoPane" class="col-md-4 col-lg-4">
 				<table class="info">
-					<thead>
+					<thead id="searchHeader">
 						<tr>
 							<td>
 								<form>
@@ -57,9 +61,15 @@
 										</tr>
 									</table>
 									<br>
+									<div class='input-group date' id='dateTime'>
+                    						<input type='text' class="form-control" id="time"/>
+                    						<span class="input-group-addon">
+                        						<span class="glyphicon glyphicon-calendar"></span>
+                    						</span>
+                					</div>
 									<div class="form-group">
 									<select class= "form-control" name="density" id="density">
-										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden"># Weather Points (higher = more time)</option>
+										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Forecast frequency (higher = more time)</option>
 										<option value="low">Low</option>
 										<option value="medium">Medium</option>
 										<option value="high">High</option>
