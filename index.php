@@ -19,7 +19,7 @@
  	<script type="text/javascript" src="libraries/jquery.slimscroll.min.js"></script>
  	<script src="libraries/infobox.js" type="text/javascript"></script>
  	<script src="libraries/spin.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="http://momentjs.com/downloads/moment.min.js"></script>
+    <script type="text/javascript" src="libraries/moment.min.js"></script>
     <script type="text/javascript" src="libraries/bootstrap-datetimepicker.min.js"></script>
 </head>
 <body>
@@ -62,7 +62,7 @@
 									</table>
 									<br>
 									<div class='input-group date' id='dateTime'>
-                    						<input type='text' class="form-control" id="time"/>
+                    						<input type='text' class="form-control" id="time" readonly="readonly"/>
                     						<span class="input-group-addon">
                         						<span class="glyphicon glyphicon-calendar"></span>
                     						</span>
@@ -81,6 +81,9 @@
 							</td>
 						</tr>
 						<tr id="directionsPrintHeader" class="printWeather"></tr>
+						<tr> 
+							<td id="routeOptions"></td>
+						</tr>
 						<tr>
 							<td id="expectedConditions"></td>
 						</tr>

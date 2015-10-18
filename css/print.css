@@ -11,6 +11,10 @@ form {
 	display: none;
 }
 
+#routeSelections {
+	display: none;
+}
+
 #search {
 	display: none;
 }

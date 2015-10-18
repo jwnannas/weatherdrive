@@ -38,6 +38,27 @@ nav, .navbar {
 		background-color: #EEE;
 }
 
+.adp-list table {
+	display: table;
+}
+
+.adp-list tbody {
+	width: 100%;
+}
+
+.adp-fullwidth {
+	background-color: #EEE;
+	padding: 0;
+}
+
+.selectedRoute {
+	background-color: #FFFFFF;
+}
+
+#firstOption, #secondOption, #thirdOption {
+	cursor: pointer;
+}
+
 #controlRow tr {
 	width: 100%;
 }
@@ -155,6 +176,11 @@ h1 {
 
 #mapSearch {
 	display: table;
+}
+
+#routeOptions td {
+	text-align: left;
+	cursor: pointer;
 }
 
 #mapSearch input {

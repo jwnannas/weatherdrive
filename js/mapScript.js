@@ -6,6 +6,7 @@ var toggleTraf = false;
 var trafficOverlay;
 var openBox;
 var passedTime = "";
+var route = 0;
 
 var options = {
   lines: 15 // The number of lines to draw
@@ -36,7 +37,8 @@ var options = {
   $('#dateTime').datetimepicker({
     defaultDate: currentDate,
       maxDate: dateLimit,
-      minDate: currentDate
+      minDate: currentDate,
+      ignoreReadonly:true
          });
     });
 
@@ -118,7 +120,10 @@ function initialize() {
   /*instantiate variables to load direction capability to the map*/
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer({
-      map: map, suppressMarkers: true }
+      map: map, 
+      suppressMarkers: true, 
+      hideRouteList: true,
+    }
     );
     var mapOptions = {
       center: { lat: 42.37469, lng: -71.12085},//center the map on Cambridge, MA
@@ -129,6 +134,7 @@ function initialize() {
     directionsDisplay.setMap(map);
   /*add event listener to search to display directions when destinations are entered*/
   var onClick = function() {
+      route = 0;
       calculateAndDisplayRoute(directionsService, directionsDisplay);
       if (openBox != null) {
         openBox.close();
@@ -251,24 +257,28 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
   directionsService.route({
       origin: document.getElementById('origin').value,
         destination: document.getElementById('destination').value,
-        travelMode: google.maps.TravelMode.DRIVING
-        //provideRouteAlternatives: true
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true
     }, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
-            var spinner = new Spinner(options).spin();
-            document.getElementById('spin').appendChild(spinner.el);
-            var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[0].legs[0]["duration"].value/3600));
-            setPrintInformation(response);
-            weatherLocations = buildLocationsArray(response, numWeatherPoints);
-            getWeather(weatherLocations, spinner, directionsDisplay, response);
+            setRouteOptions(response, directionsDisplay);
+          runWeather(response, directionsDisplay); 
         } else {
             window.alert('Please search for a valid location');
         }
     });
 
+function runWeather (response, directionsDisplay) {
+      var spinner = new Spinner(options).spin();
+            document.getElementById('spin').appendChild(spinner.el);
+      var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[route].legs[0]["duration"].value/3600));
+        setPrintInformation(response);
+        weatherLocations = buildLocationsArray(response, numWeatherPoints);
+            getWeather(weatherLocations, spinner, directionsDisplay, response);
+}
 
   function setPrintInformation (response) {
-    var directions = response.routes[0].legs[0];
+    var directions = response.routes[route].legs[0];
     var directionsPrintHeader = "<table><tr><td><img src='images/car_A.png'></td><td>"+directions["start_address"]+"</td><td><small><i><span id='depart'> Departing:</span></i></small></td></tr><tr><td><img src='images/car_B.png'></td><td>"+directions["end_address"]+"</td><td><small><i><span id='arrive'> Arriving: </span></i></small></td></tr></table>";
     $('#directionsPrintHeader').empty();
     $('#directionsPrintHeader').append('<td>'+directionsPrintHeader+'</td>');
@@ -278,7 +288,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     function buildLocationsArray(response, numWeatherPoints){
       var requestedTime = getRequestedTime();
     var weatherLocations = [];
-      var directions = response.routes[0].legs[0];
+      var directions = response.routes[route].legs[0];
       var distance = directions.distance["value"];
       var steps = directions.steps.length;
        var start = directions.steps[0]["start_point"].toString();
@@ -292,15 +302,46 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         }
         return weatherLocations;
     }
-
+    
+    function setRouteOptions (response, directionsDisplay) {
+    
+    var routes = "<br><table id='routeSelections' class='outlook'>"
+    for (a = 0; a < response.routes.length; a ++){
+      if (a == 0) {
+        routes += "<tr id='"+a+"'class='selectedRoute'><td><b>"+response.routes[a].summary + "</b> " + response.routes[a].legs[0].distance["text"] + " - about " + response.routes[a].legs[0].duration["text"]+"</td></tr>"
+      } else {
+        routes += "<tr id='"+a+"'><td><b>"+response.routes[a].summary + "</b> " + response.routes[a].legs[0].distance["text"] + " - about " + response.routes[a].legs[0].duration["text"]+"</td></tr>" 
+    }
+  }
+      routes += "</table>";
+  $('#routeOptions').empty();
+    $('#routeOptions').append(routes);
+    
+      var selectAndIlluminate = function () {
+        $('.outlook tr.selectedRoute').removeClass('selectedRoute');
+        route = getRouteNumber(this);
+        $(this).addClass('selectedRoute');
+        runWeather(response, directionsDisplay);
+        function getRouteNumber (element) {
+          var routeSelection = $(element).attr('id');
+          return routeSelection;
+            }
+   
+      }
+    
+    for (b=0; b < response.routes.length; b++) {
+      document.getElementById(b).addEventListener('click', selectAndIlluminate);
+    }
+    
+    }
+    
     function getRequestedTime () {
-    	console.log(passedTime);
-    	if (passedTime != '') {
-    		return passedTime;
-    	} else {
-    		var stamp = new Date($('#dateTime input').val()).getTime()/1000;
-    		return stamp;
-    	}
+      if (passedTime != '') {
+        return passedTime;
+      } else {
+        var stamp = new Date($('#dateTime input').val()).getTime()/1000;
+        return stamp;
+      }
     }
     
     /*find the geolocation associated with a given distance along the route and return the step associated
@@ -344,7 +385,9 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }
 
     function plotWeather(weatherData, directionsDisplay, response, spinner) {
-    directionsDisplay.setDirections(response)
+    directionsDisplay.setDirections(response);
+    directionsDisplay.setRouteIndex(Number(route));
+
       setTimeout(function(){
       function setMapOnAll(map) {
           for (var i = 0; i < markers.length; i++) {
@@ -416,7 +459,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         var weatherPoints = JSON.parse(weatherData);
         var weatherOutlook = weatherPoints.pop();
         passedTime = '';
-        console.log(passedTime);
         $("#depart").append(weatherPoints[0]["convertedLocationTime"]);
         $("#arrive").append(weatherPoints[weatherPoints.length-1]["convertedLocationTime"]);
         $("#controlRow").removeClass('hideControls');
