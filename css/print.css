@@ -1,117 +1,37 @@
+/*
+ * print styles for WeatherDrive
+ * version 1.0
+ */
+
+/* Directory
+	1. ==Global
+	2. ==Navigation
+	3. ==Directions Info Pane
+		a. ??Search Group
+		b. ??Results Group
+			i. &&Summaries
+			ii. &&Steps
+	4. ==Map
+		a. ??Main Map
+		c. ??Weather Box
+	5. ==Media
+*/
+
+/* ==Global== */
 @page {
 	size: letter;
 	margin: .5in;
 }
 
-#mapColumn {
-	display: none;
-}
-
 form {
-	display: none;
-}
-
-#routeSelections {
-	display: none;
-}
-
-#search {
-	display: none;
-}
-
-#controlRow {
-	display: none;
-}
+		display: none;
+	}
 
 .wi {
 	color: #F99E28;
 }
 
-.toggleSteps {
-	display: none;
-}
-
-.info thead {
-	display: table-row-group;
-}
-
-#switch {
-	display: none;
-}
-
-#density {
-	display: none;
-}
-
-.screenWeather {
-	display: none !important;
-}
-
-.weatherBoxTitle {
-	border-bottom: 1px solid #F99E28;
-}
-
-.prominentWeather {
-}
-
-.bottom td {
-	border-top: 1px solid gray !important;
-}
-
-.detailWeather {
-	text-align: left;
-}
-
-.alert {
-	text-align: left;
-}
-
-.weatherBoxTitleSpace {
-	padding-left: 25%;
-}
-
-.weatherBox table{
-	display: table;
-	font-size: small;
-	border-collapse: collapse;
-}
-
-.weatherBox td {
-	padding-right: .5em;
-}
-
-.outlook {
-	display: table;
-	text-align: center;
-}
-
-.outlook i {
-	font-size: 2em;
-}
-
-.outlook td {
-	padding: .5em .5em 0 .5em;
-}
-
-.outlook .summary {
-	font-weight: bold;
-	font-style: italic;
-	font-size: .5em;
-}
-
-.outlook td {
-	display: table-cell;
-}
-
-#depart, #arrive {
-	padding-left: 1em;
-}
-
-#expectedConditions {
-	background-color: #EEE;
-	border: 1px solid #C0C0C0;
-}
-
+/* ==Navigation== */
 nav, .navbar {
 	min-width: 320px;
 	margin-bottom: 0;
@@ -127,3 +47,113 @@ nav, .navbar {
 .pull-right {
 	display: inline-block;
 }
+
+/* ==Directions Info Pane== */
+.info thead {
+	display: table-row-group;
+}
+
+	/* ??Search Group?? */
+
+	#switch {
+		display: none;
+	}
+
+	#density {
+		display: none;
+	}
+
+	#search {
+		display: none;
+	}
+
+	/* ??Results Group?? */
+	
+		/* &&Summaries&& */
+		#routeSelections {
+			display: none;
+		}
+
+		#controlRow {
+			display: none;
+		}
+
+		#depart, #arrive {
+			padding-left: 1em;
+		}
+
+		#expectedConditions {
+			background-color: #EEE;
+			border: 1px solid #C0C0C0;
+		}
+
+		.outlook {
+			display: table;
+			text-align: center;
+		}
+
+		.outlook i {
+			font-size: 2em;
+		}
+
+		.outlook td {
+			display: table-cell;
+			padding: .5em .5em 0 .5em;
+		}
+
+		.outlook .summary {
+		font-weight: bold;
+		font-style: italic;
+		font-size: .5em;
+		}
+
+		/* &&Steps&& */
+		.toggleSteps {
+			display: none;
+		}
+
+		.screenWeather {
+			display: none !important;
+		}
+		
+/* ==Map== */
+
+	/* ??Main Map?? */
+	#mapColumn {
+		display: none;
+	}
+
+	/* ??Weather Box?? */
+	.weatherBox table{
+		display: table;
+		font-size: small;
+		border-collapse: collapse;
+	}
+
+	.weatherBox td {
+		padding-right: .5em;
+	}
+
+	.weatherBoxTitle {
+		border-bottom: 1px solid #F99E28;
+	}
+
+	.weatherBoxTitleSpace {
+		padding-left: 25%;
+	}
+
+	.bottom td {
+		border-top: 1px solid gray !important;
+	}
+
+	.detailWeather {
+		text-align: left;
+	}
+
+	.alert {
+		text-align: left;
+	}
+
+
+
+

@@ -1,3 +1,24 @@
+/*
+ * screen styles for WeatherDrive
+ * version 1.0
+ */
+
+/* Directory
+	1. ==Global
+	2. ==Navigation
+	3. ==Directions Info Pane
+		a. ??Search Group
+		b. ??Results Group
+			i. &&Summaries
+			ii. &&Steps
+	4. ==Map
+		a. ??Main Map
+		b. ??Map Buttons
+		c. ??Weather Box
+	5. ==Media
+*/
+
+/* ==Global== */
 html {
 	height: 100%;
 }
@@ -7,6 +28,37 @@ body {
 	padding-top: 40px;
 }
 
+#actionPanel {
+	position: relative;
+	height: 100%;
+	width: 100%;
+}
+
+#actionRow {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0 0 0 5%;
+}
+
+table {
+	display: block;
+	height: 100%;
+	overflow: auto;
+	width: 100%;
+	margin-bottom: 0;
+	border-collapse: collapse;
+	padding: 1%;
+	background: rgb(255,255,255);
+	background: rgba(255,255,255,0.7);
+}
+
+
+.wi {
+	color: #F99E28;
+}
+
+/* ==Navigation== */
 nav, .navbar {
 	min-width: 320px;
 	margin-bottom: 0;
@@ -23,311 +75,304 @@ nav, .navbar {
 	margin: 17px 10px 0 0;
 }
 
-.hideControls {
-	display: none !important;
-}
 
-#controlRow td div {
-	margin-top: 2%;
-	border-top: 1px solid #C0C0C0;
-	border-right: 1px solid #C0C0C0;
-	border-left:	1px solid #C0C0C0;
-}
 
-#controlRow table {
-		background-color: #EEE;
-}
-
-.adp-list table {
-	display: table;
-}
-
-.adp-list tbody {
-	width: 100%;
-}
-
-.adp-fullwidth {
-	background-color: #EEE;
-	padding: 0;
-}
-
-.selectedRoute {
-	background-color: #FFFFFF;
-}
-
-#firstOption, #secondOption, #thirdOption {
-	cursor: pointer;
-}
-
-#controlRow tr {
-	width: 100%;
-}
-
-#print:hover, #email:hover {
-	cursor: pointer;
-}
-
-#print, #email {
-	text-align: right;
-}
-
-#print {
-	padding-right: 5px;
-}
-
-#email {
-	padding-left: 0;
-}
-
-#adp-placemark {
-	margin-top: 0px;
-	border-top: none;
-}
-
-h1 {
-	margin: 0;
-}
-
-#actionPanel {
-	position: relative;
-	height: 100%;
-	width: 100%;
-}
-
-.map-container{
-    position: relative;
-    height: 100%;
-    border: 1px solid white;
-}
-.map-container .map-canvas{
-    position: absolute;
-    height: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-}
-
-#actionRow {
-	height: 100%;
-	width: 100%;
-	margin: 0;
-	padding: 0 0 0 5%;
-}
-
-#mapColumn {
-	height: 100%;
-	padding: 7% 5% 7% 0;
-}
-
+/* ==Directions Info Pane== */ 
 #infoPane {
 	height: 100%;
 	padding: 7% 5% 7% 0;
-}
-
-#search {
-	width: 100%;
-}
-
-.buttonClicked {
-	color: #000!important;
-	font-weight: 500;
-}
-
-#buttonContainer {
-	float: left;
-}
-
-#radar {
-	margin: 10px 10px 10px 0;
-	padding: 8px;
-	border: none;
-	border-top-right-radius: 2px;
-	border-bottom-right-radius: 2px;
-	border-top-left-radius: 0px;
-	border-bottom-left-radius: 0px;
-	font-size: 11px;
-	color: #565656;
-	box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
-}
-
-#traffic {
-	margin: 10px 0 10px 10px;
-	padding: 8px;
-	border: none;
-	border-top-left-radius: 2px;
-	border-bottom-left-radius: 2px;
-	border-top-right-radius: 0px;
-	border-bottom-right-radius: 0px;
-	font-size: 11px;
-	color: #565656;
-	box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
-	border-right: 1px solid #eaeaea;
-}
-
-.carIcon {
-	text-align: center;
-	background-color: white;
-	width: 0;
-	padding: .5em;
-}
-
-#mapSearch {
-	display: table;
-}
-
-#routeOptions td {
-	text-align: left;
-	cursor: pointer;
-}
-
-#mapSearch input {
-	border: none;
-	border-radius: 0;
-}
-
-#mapSearch tr {
-	display: table-row;
-}
-
-#mapSearch td {
-	display: table-cell;
-}
-
-#switch {
-	text-align: center;
-	background-color: white;
-	cursor: pointer;
-}
-
-.origin {
-	border-bottom: 2px solid gray;
-}
-
-table {
-	display: block;
-	height: 100%;
-	overflow: auto;
-	width: 100%;
-	margin-bottom: 0;
-	border-collapse: collapse;
-	padding: 1%;
-}
-
-#searchHeader, #searchHeader>tr, #searchHeader>tr>td{
-	display: block;
-}
-
-#dateTime {
-	margin-bottom: 15px;
 }
 
 .info {
 	border: 1px solid white;
 }
 
-#directionsTbody, #directionsTr, #directionsTD {
-	display: block;
-	width: 100%;
-}
+	/* ??Search Group?? */
+	#searchHeader, #searchHeader>tr, #searchHeader>tr>td{
+		display: block;
+	}
 
-.adp-directions {
-	display: table;
-}
+	#mapSearch {
+		display: table;
+	}
 
-.outlook {
-	display: table;
-	text-align: center;
-}
+	#mapSearch input {
+		border: none;
+		border-radius: 0;
+	}
 
-.outlook i {
-	font-size: 2em;
-}
+	#mapSearch tr {
+		display: table-row;
+	}
 
-.outlook td {
-	padding: .5em .5em 0 .5em;
-}
+	#mapSearch td {
+		display: table-cell;
+	}
 
-.outlook .summary {
-	font-weight: bold;
-	font-style: italic;
-	font-size: .5em;
-}
+	.carIcon {
+		text-align: center;
+		background-color: white;
+		width: 0;
+		padding: .5em;
+	}
 
-.outlook td {
-	display: table-cell;
-}
+	.origin {
+		border-bottom: 2px solid gray;
+	}
 
-.outlook tbody {
-	overflow: scroll;
-}
+	#switch {
+		text-align: center;
+		background-color: white;
+		cursor: pointer;
+	}
 
-#expectedConditions, #alerts {
-	margin-top: 2%;
-}
+	#dateTime {
+		margin-bottom: 15px;
+	}
 
-table {
-	background: rgb(255,255,255);
-	background: rgba(255,255,255,0.7);
-}
+	#search {
+		width: 100%;
+	}
 
-.printWeather {
-	display: none !important;
-}
+	/* ??Results Group?? */
+	
+		/* &&Summaries&& */
+		.printWeather {
+			display: none !important;
+		}
 
-.wi {
-	color: #F99E28;
-}
+		#routeOptions td {
+			text-align: left;
+			cursor: pointer;
+		}
 
-.weatherBox {
-	width: 350px;
-	background-color: white;
-}
+		#firstOption, #secondOption, #thirdOption {
+			cursor: pointer;
+		}
 
-.weatherBoxTitle {
-	border-bottom: 3px solid #F99E28;
-}
+		.selectedRoute {
+			background-color: #FFFFFF;
+		}
 
-.weatherInfoContainer {
-	padding: 1%;
-}
+		#controlRow td div {
+			margin-top: 2%;
+			border-top: 1px solid #C0C0C0;
+			border-right: 1px solid #C0C0C0;
+			border-left: 1px solid #C0C0C0;
+		}
 
-.prominentWeather {
-	font-size: 5em;
-}
+		#controlRow table {
+			background-color: #EEE;
+		}
 
-.bottom {
-	border-top: 2px solid gray;
-}
+		.hideControls {
+			display: none !important;
+		}
 
-.detailWeather {
-	text-align: left;
-}
+		#controlRow tr {
+			width: 100%;
+		}
 
-.alert {
-	text-align: left;
-}
+		#print:hover, #email:hover {
+			cursor: pointer;
+		}
 
-.directionsResult {
-	text-align: left;
-}
+		#print, #email {
+			text-align: right;
+		}
 
-.weatherBoxTitleSpace {
-	padding-left: 25%;
-}
+		#print {
+			padding-right: 5px;
+		}
 
-.weatherBox table{
-	display: table;
-	text-align: center;
-}
+		#email {
+			padding-left: 0;
+		}
 
-.toggleSteps {
-	color: #0000EE;
-	font-weight: bold;
-	cursor: pointer;
-}
+		#expectedConditions, #alerts {
+			margin-top: 2%;
+		}
+
+		.outlook {
+			display: table;
+			text-align: center;
+		}
+
+		.outlook i {
+			font-size: 2em;
+		}
+
+		.outlook td {
+			padding: .5em .5em 0 .5em;
+		}
+
+		.outlook .summary {
+			font-weight: bold;
+			font-style: italic;
+			font-size: .5em;
+		}
+
+		.outlook td {
+			display: table-cell;
+		}
+
+		.outlook tbody {
+			overflow: scroll;
+		}
+
+		/* &&Steps&& */
+		.directionsResult {
+			text-align: left;
+		}
+
+		#directionsTbody, #directionsTr, #directionsTD {
+			display: block;
+			width: 100%;
+		}
+
+		#adp-placemark {
+			margin-top: 0px;
+			border-top: none;
+		}
+		
+		.adp-summary {
+			font-weight: bold;
+		}
+
+		.toggleSteps {
+			color: #0000EE;
+			font-weight: bold;
+			cursor: pointer;
+			background-color: #EEE;
+			margin-bottom: 1%;
+			text-align: center;
+			border: 1px solid #C0C0C0;
+		}
+		
+		.toggleSteps:hover {
+			background-color: #E6E6E6;
+			border-color: #ADADAD;
+		}
+
+		.adp-directions {
+			display: table;
+		}
+
+		.adp-list table {
+			display: table;
+		}
+
+		.adp-list tbody {
+			width: 100%;
+		}
+		
+		.weatherRow:hover {
+			background-color: #E6E6E6;
+		}
+
+/* ==Map== */
+
+	/* ??Main Map?? */
+	#mapColumn {
+		height: 100%;
+		padding: 7% 5% 7% 0;
+	}
+
+	.map-container{
+    	position: relative;
+    	height: 100%;
+    	border: 1px solid white;
+	}
+
+	.map-container .map-canvas{
+    	position: absolute;
+    	height: 100%;
+    	top: 0;
+    	right: 0;
+    	bottom: 0;
+    	left: 0;
+    	margin: 0;
+    	padding: 0;
+	}
+
+	/* ??Map Buttons?? */
+	#buttonContainer {
+		float: left;
+	}
+
+	#radar {
+		margin: 10px 10px 10px 0;
+		padding: 8px;
+		border: none;
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
+		border-top-left-radius: 0px;
+		border-bottom-left-radius: 0px;
+		font-size: 11px;
+		color: #565656;
+		box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
+	}
+
+	#traffic {
+		margin: 10px 0 10px 10px;
+		padding: 8px;
+		border: none;
+		border-top-left-radius: 2px;
+		border-bottom-left-radius: 2px;
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
+		font-size: 11px;
+		color: #565656;
+		box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.3);
+		border-right: 1px solid #eaeaea;
+	}
+
+	.buttonClicked {
+		color: #000!important;
+		font-weight: 500;
+	}
+
+
+	/* ??Weather Box?? */
+	.weatherBox {
+		width: 350px;
+		background-color: white;
+	}
+
+	.weatherBox table{
+		display: table;
+		text-align: center;
+	}
+
+	.weatherInfoContainer {
+		padding: 1%;
+	}
+
+	.weatherBoxTitle {
+		border-bottom: 3px solid #F99E28;
+	}
+
+	.weatherBoxTitleSpace {
+		padding-left: 25%;
+	}
+
+	.prominentWeather {
+		font-size: 5em;
+	}
+
+	.bottom {
+		border-top: 2px solid gray;
+	}
+
+	.detailWeather {
+		text-align: left;
+	}
+
+	.alert {
+		text-align: left;
+	}
+
+/* ==Media== */
 
 @media screen and (max-width: 480px) {
 	body {

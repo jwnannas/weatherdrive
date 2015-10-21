@@ -82,7 +82,7 @@
 						</tr>
 						<tr id="directionsPrintHeader" class="printWeather"></tr>
 						<tr> 
-							<td id="routeOptions"></td>
+							<td id="routeOptions" class="hideControls"></td>
 						</tr>
 						<tr>
 							<td id="expectedConditions"></td>
