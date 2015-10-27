@@ -38,7 +38,7 @@
 	</nav>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
-			<div id="infoPane" class="col-sm-4 col-md-4 col-lg-4">
+			<div id="infoPane" class="col-md-4 col-lg-4">
 				<table class="info">
 					<thead id="searchHeader">
 						<tr>
@@ -116,7 +116,7 @@
 					</tbody>
 				</table>
 			</div>		
-			<div id="mapColumn" class="col-sm-8 col-md-8 col-lg-8">
+			<div id="mapColumn" class="col-md-8 col-lg-8">
 				<div class="map-container">
 					<div id="spin"></div>
 					<div id="map-canvas" class="map-canvas"></div>
