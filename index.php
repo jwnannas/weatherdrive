@@ -21,6 +21,11 @@
  	<script src="libraries/spin.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="libraries/moment.min.js"></script>
     <script type="text/javascript" src="libraries/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="libraries/sonic.js"></script>
+    <script type="text/javascript" src="libraries/Encoder/b64.js"></script>
+    <script type="text/javascript" src="libraries/Encoder/GIFEncoder.js"></script>
+    <script type="text/javascript" src="libraries/Encoder/LZWEncoder.js"></script>
+    <script type="text/javascript" src="libraries/Encoder/NeuQuant.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">
@@ -33,7 +38,7 @@
 	</nav>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
-			<div id="infoPane" class="col-md-4 col-lg-4">
+			<div id="infoPane" class="col-sm-4 col-md-4 col-lg-4">
 				<table class="info">
 					<thead id="searchHeader">
 						<tr>
@@ -80,6 +85,7 @@
 								</form>
 							</td>
 						</tr>
+						<tr id="mobileLoader"></tr>
 						<tr id="directionsPrintHeader" class="printWeather"></tr>
 						<tr> 
 							<td id="routeOptions" class="hideControls"></td>
@@ -110,7 +116,7 @@
 					</tbody>
 				</table>
 			</div>		
-			<div id="mapColumn" class="col-md-8 col-lg-8">
+			<div id="mapColumn" class="col-sm-8 col-md-8 col-lg-8">
 				<div class="map-container">
 					<div id="spin"></div>
 					<div id="map-canvas" class="map-canvas"></div>

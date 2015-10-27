@@ -27,7 +27,7 @@ var options = {
   , scale: 1 // Scales overall size of the spinner
   , corners: 1 // Corner roundness (0..1)
   , color: colors  // #rgb or #rrggbb or array of colors
-  , opacity: 0 // Opacity of the lines
+  , opacity: .25 // Opacity of the lines
   , rotate: 5 // The rotation offset
   , direction: 1 // 1: clockwise, -1: counterclockwise
   , speed: 1 // Rounds per second
@@ -41,6 +41,31 @@ var options = {
   , hwaccel: false // Whether to use hardware acceleration
   , position: 'absolute' // Element positioning
 }
+
+/*options passed to the bar loader to be displayed on mobile devices*/
+var mobileWidth = $('#mobileLoader').width();
+if (mobileWidth == 0) {
+  mobileWidth = 1;
+}
+var loader = new Sonic({
+  width: mobileWidth,
+  height: 10,
+  stepsPerFrame: 1,
+  trailLength: .2,
+  pointDistance: .02,
+  fps: 25,
+  padding: 0,
+  fillColor: '#F99E28',
+  setup: function() {
+    this._.lineWidth = 20;
+  },
+  path: [
+    ['line', 5, 5, mobileWidth-5, 5],
+    ['line', mobileWidth-5, 5, 5, 5]
+  ],
+  convert: true,
+  background:"#09132e"
+});
 
 /*initialize the date and time picker to allow date/time selection on the site*/
 $(function () {
@@ -57,8 +82,9 @@ $(function () {
 /*initialize the custom scrollbar for the info pane, from slimscroll.js*/
 $('.info').slimScroll({
   color: '#6C6C6C', //set the color of the scroll to a shade of gray
-  size: '10px', //set the scrollbar width to 10px
+  size: '5px', //set the scrollbar width to 10px
   height: '100%', //set the scrollbar height to the height of the info pane
+  alwaysVisible: true
 });
 
 /*hide print button on Android devices, because they do not currently support window.print()*/
@@ -353,6 +379,8 @@ function runWeather (response, directionsDisplay) {
   /*add a spinner at beginning of search to visually cue user of activity*/
     var spinner = new Spinner(options).spin();
     document.getElementById('spin').appendChild(spinner.el);
+    loader.play();
+    $('#mobileLoader').append(loader.canvas);
     
       var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[route].legs[0]["duration"].value/3600));//get the number of weather points for this request
         setPrintInformation(response);//add directions information for this search specifically for print styles
@@ -731,6 +759,7 @@ function runWeather (response, directionsDisplay) {
           }
         } 
         document.getElementById('spin').removeChild(spinner.el);//remove the spinner to cue user that search is complete
+        $('#mobileLoader').empty();
         }, 1);
     }
 }
