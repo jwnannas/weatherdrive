@@ -85,7 +85,7 @@
 								</form>
 							</td>
 						</tr>
-						<tr id="mobileLoader"></tr>
+						<tr id="barLoader"></tr>
 						<tr id="directionsPrintHeader" class="printWeather"></tr>
 						<tr> 
 							<td id="routeOptions" class="hideControls"></td>

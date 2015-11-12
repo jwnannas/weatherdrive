@@ -42,13 +42,13 @@ var options = {
   , position: 'absolute' // Element positioning
 }
 
-/*options passed to the bar loader to be displayed on mobile devices*/
-var mobileWidth = $('#mobileLoader').width();
-if (mobileWidth == 0) {
-  mobileWidth = 1;
+/*options passed to the bar loader on initial window load*/
+var barWidth = $('#barLoader').width();
+if (barWidth == 0) {
+  barWidth = 1;
 }
 var loader = new Sonic({
-  width: mobileWidth,
+  width: barWidth,
   height: 10,
   stepsPerFrame: 1,
   trailLength: .2,
@@ -60,11 +60,38 @@ var loader = new Sonic({
     this._.lineWidth = 20;
   },
   path: [
-    ['line', 5, 5, mobileWidth-5, 5],
-    ['line', mobileWidth-5, 5, 5, 5]
+    ['line', 5, 5, barWidth-5, 5],
+    ['line', barWidth-5, 5, 5, 5]
   ],
   convert: true,
   background:"#09132e"
+});
+
+/*add event listener to the bar loader to resize the width when the window is resized*/
+window.addEventListener("resize", function () {
+var barWidth = $('#barLoader').width();
+if (barWidth == 0) {
+  barWidth = 1;
+}
+loader = new Sonic({
+  width: barWidth,
+  height: 10,
+  stepsPerFrame: 1,
+  trailLength: .2,
+  pointDistance: .02,
+  fps: 25,
+  padding: 0,
+  fillColor: '#F99E28',
+  setup: function() {
+    this._.lineWidth = 20;
+  },
+  path: [
+    ['line', 5, 5, barWidth-5, 5],
+    ['line', barWidth-5, 5, 5, 5]
+  ],
+  convert: true,
+  background:"#09132e"
+});
 });
 
 /*initialize the date and time picker to allow date/time selection on the site*/
@@ -380,7 +407,7 @@ function runWeather (response, directionsDisplay) {
     var spinner = new Spinner(options).spin();
     document.getElementById('spin').appendChild(spinner.el);
     loader.play();
-    $('#mobileLoader').append(loader.canvas);
+    $('#barLoader').append(loader.canvas);
     
       var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[route].legs[0]["duration"].value/3600));//get the number of weather points for this request
         setPrintInformation(response);//add directions information for this search specifically for print styles
@@ -759,7 +786,7 @@ function runWeather (response, directionsDisplay) {
           }
         } 
         document.getElementById('spin').removeChild(spinner.el);//remove the spinner to cue user that search is complete
-        $('#mobileLoader').empty();
+        $('#barLoader').empty();
         }, 1);
     }
 }
