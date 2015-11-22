@@ -38,6 +38,8 @@
 	</nav>
 	<div id="actionPanel">
 		<div id="actionRow" class="row">
+			<a id="mapButton" class="visible-xs">a</a>
+			<a href="#detailButton" class="btn btn-default visible-xs tabTop" role="button" >View Map</a>
 			<div id="infoPane" class="col-md-4 col-lg-4">
 				<table class="info">
 					<thead id="searchHeader">
@@ -64,6 +66,21 @@
 												<input type="text" name="destination" id="destination" class="form-control" placeholder="Destination">
 											</td>
 										</tr>
+										<tr>
+										<div id="errorModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  											<div class="modal-dialog modal-sm">
+    											<div class="modal-content">
+    												<div class="modal-header">
+  														<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+  														<h4 class="modal-title" id="mySmallModalLabel"><img src="images/logoIcon.png">hoops!</h4>
+  													</div>
+  													<div class="modal-body">
+      													<h5>Please enter a valid search location.</h5>
+    												</div>
+    											</div>
+  											</div>
+										</div>
+										</tr>
 									</table>
 									<br>
 									<div class='input-group date' id='dateTime'>
@@ -74,7 +91,7 @@
                 					</div>
 									<div class="form-group">
 									<select class= "form-control" name="density" id="density">
-										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Forecast frequency (higher = more time)</option>
+										<option selected="selected" disabled="disabled" value="densityLabel" hidden="hidden">Forecast frequency</option>
 										<option value="low">Low</option>
 										<option value="medium">Medium</option>
 										<option value="high">High</option>
@@ -106,6 +123,41 @@
 								</div>
 							</td>
 						</tr>
+						<tr>
+								<div id="emailModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myemailSmallModalLabel">
+  								<div class="modal-dialog modal-sm">
+    								<div class="modal-content">
+    									<div class="modal-header">
+  											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+  											<h4 class="modal-title" id="myemailSmallModalLabel"><img src="images/logoIcon.png">eatherDrive Email Service</h4>
+  										</div>
+  										<div class="modal-body">
+      										<h5>Send this search to an email:</h5>
+      										<input type="text" name="emailAddress" id="emailAddress" class="form-control" placeholder="Email Address"></input>
+      										<br>
+      										<button id="emailAddressButton" type="button" class="btn btn-default"><span aria-hidden="true">Send Email</span></button>
+    									</div>
+    								</div>
+  								</div>
+							</div>
+						
+						</tr>
+						<tr>
+							<div id="sentModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mysentSmallModalLabel">
+  								<div class="modal-dialog modal-sm">
+    								<div class="modal-content">
+    									<div class="modal-header">
+  											<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+  											<h4 class="modal-title" id="mysentSmallModalLabel">Success!</h4>
+  										</div>
+  										<div class="modal-body">
+      										<h5>A link to this search has been sent to:</h5>
+      										<span id="emailSent"></span>
+    									</div>
+    								</div>
+  								</div>
+							</div>
+						</tr>
 					</thead>
 					<tbody id="directionsTbody">
 						<tr id ="directionsTr"> 
@@ -115,7 +167,9 @@
 						</tr>
 					</tbody>
 				</table>
-			</div>		
+			</div>
+			<a id="detailButton" class="visible-xs">a</a>
+			<a href="#mapButton" class="btn btn-default visible-xs tabBottom" role="button">View Detail</a>
 			<div id="mapColumn" class="col-md-8 col-lg-8">
 				<div class="map-container">
 					<div id="spin"></div>

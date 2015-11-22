@@ -80,11 +80,41 @@ nav, .navbar {
 /* ==Directions Info Pane== */ 
 #infoPane {
 	height: 100%;
-	padding: 7% 5% 7% 0;
+	padding: 0 5% 7% 0;
+	margin-top: 7%;
 }
 
 .info {
 	border: 1px solid white;
+}
+
+#mapButton {
+    position: relative;
+	top: -50px;
+	visibility: hidden;
+}
+
+.tabTop {
+	width: 30%;
+	padding: 3px;
+	margin-top: 7%;
+	margin-bottom: -7%;
+	border: 1px solid white !important;
+	border-radius: 0 !important;
+}
+
+#detailButton {
+	position: relative;
+	top: -50px;
+	visibility: hidden;
+}
+
+.tabBottom {
+	width: 30%;
+	padding: 3px;
+	margin-bottom: -7%;
+	border: 1px solid white !important;
+	border-radius: 0 !important;
 }
 
 	/* ??Search Group?? */
@@ -100,7 +130,18 @@ nav, .navbar {
 		border: none;
 		border-radius: 0;
 	}
-
+	
+	.modal-header img {
+		vertical-align: text-bottom;
+	}
+	
+	.modal-header {
+		color: #09132e;
+		border-bottom: 2px solid #F99E28;
+	}
+	
+	
+	
 	#mapSearch tr {
 		display: table-row;
 	}
@@ -130,7 +171,7 @@ nav, .navbar {
 		margin-bottom: 15px;
 	}
 
-	#search {
+	#search, #emailAddressButton {
 		width: 100%;
 	}
 
@@ -275,7 +316,8 @@ nav, .navbar {
 	/* ??Main Map?? */
 	#mapColumn {
 		height: 100%;
-		padding: 7% 5% 7% 0;
+		padding: 0 5% 7% 0;
+		margin-top: 7%
 	}
 
 	.map-container{
@@ -335,7 +377,7 @@ nav, .navbar {
 
 	/* ??Weather Box?? */
 	.weatherBox {
-		width: 350px;
+		width: 275px;
 		background-color: white;
 	}
 

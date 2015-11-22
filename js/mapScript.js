@@ -144,8 +144,10 @@ document.getElementById('switch').addEventListener('click', switchClick); //add 
 
 /*add event listener to send email with pertinent information when email button is clicked*/
 document.getElementById('email').addEventListener('click', function () {
-      var email = prompt("Enter email to send to", "");//prompt the user to enter the desired send-to email address
-      if (email != null) { //if an email has been entered
+    $('#emailModal').modal();//prompt the user to enter the desired send-to email address
+    document.getElementById('emailAddressButton').addEventListener('click', function () {
+      var email = $('#emailAddress').val();
+      if (email != '') { //if an email has been entered
       origin = document.getElementById('origin').value.replace(/ /g,""); //remove spaces from the origin entered in the form and save that value here
       destination = document.getElementById('destination').value.replace(/ /g,""); //remove spaces from the destination entered in the form save that value here
       density = document.getElementById('density').value; //save the value of the weather point density selection here
@@ -158,10 +160,13 @@ document.getElementById('email').addEventListener('click', function () {
           url:"php/mail.php",
         data: {email: email, weatherDriveURL: emailURL},
         success: function(data) {
-              window.alert('Your searched route has been sent'); //confirm the message was sent when if mail.php successfully completes
+            $('#emailModal').modal('toggle');
+            $('#emailSent').text(email);
+            $('#sentModal').modal();//confirm the message was sent if mail.php successfully completes
           }
       });
   }
+  });
 });
 
 /**
@@ -172,7 +177,7 @@ document.getElementById('email').addEventListener('click', function () {
  */
 function getDensity (densitySelection, duration) {
   switch (densitySelection) {
-      case 'Forecast frequency (higher = more time)'://if no option selected default to medium density
+      case 'Forecast frequency'://if no option selected default to medium density
           $('#density').val("medium");
           return 5;
       case 'Low':
@@ -337,7 +342,7 @@ function toggleRadar (radarDiv) {
     radar.setMap(myAerisMap);//add basic radar to map
     precip.setOpacity(0);//make the precipitation layer invisible by default by setting opacity to zero
     radar.setOpacity(0); //make the radar layer invisible by default by setting opacity to zero
-    radar.setZIndex(-1); //put the radar layer behind the precipitation layer
+    precip.setZIndex(-1); //put the precipitation layer behind the radar layer
 
   /*add Radar text to radar buton*/
     var radarText = document.createTextNode("Radar");
@@ -387,7 +392,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             setRouteOptions(response, directionsDisplay);//add the route options to the page
             runWeather(response, directionsDisplay); //get the weather information for this route
         } else {
-            window.alert('Please search for a valid location');//prompt user if invalid place was searched
+          $('#errorModal').modal();//prompt user with custom modal if invalid place was searched
         }
     });
 
@@ -406,6 +411,7 @@ function runWeather (response, directionsDisplay) {
   /*add a spinner at beginning of search to visually cue user of activity*/
     var spinner = new Spinner(options).spin();
     document.getElementById('spin').appendChild(spinner.el);
+  /*add a bar loader at beginning of search to visually cue user of activity*/
     loader.play();
     $('#barLoader').append(loader.canvas);
     
@@ -622,9 +628,9 @@ function runWeather (response, directionsDisplay) {
                         '<tr class="bottom detailWeather"><td>Precip Prob: '+ formatWeatherNumber(weatherObject["predictedWeather"]["precipProbability"], 100, 0, '&#37;')+'</td>'+
                         '<td>Humidity: '+formatWeatherNumber(weatherObject["predictedWeather"]["humidity"], 100, 0, '&#37;')+'</td>'+
                         '<td>Visibility: '+weatherObject["predictedWeather"]["visibility"]+'</td></tr>'+
-                        '<tr class="detailWeather"><td>Precip Intensity: '+formatWeatherNumber(weatherObject["predictedWeather"]["precipIntensity"], 1, 2, 'in/hr')+'</td>'+
-                        '<td>Dew Point: '+formatWeatherNumber(weatherObject["predictedWeather"]["dewPoint"], 1, 0, '&deg;')+'</td>'+
-                        '<td>Cloud Cover: '+formatWeatherNumber(weatherObject["predictedWeather"]["cloudCover"], 100, 0, '&#37;')+'</td></tr>'+
+                        '<tr class="detailWeather"><td>Precip Int: '+formatWeatherNumber(weatherObject["predictedWeather"]["precipIntensity"], 1, 2, 'in/hr')+'</td>'+
+                        '<td>Dew Pt: '+formatWeatherNumber(weatherObject["predictedWeather"]["dewPoint"], 1, 0, '&deg;')+'</td>'+
+                        '<td>Cloud Cvr: '+formatWeatherNumber(weatherObject["predictedWeather"]["cloudCover"], 100, 0, '&#37;')+'</td></tr>'+
                         '<tr class="bottom alert"><td>Alerts:</td> '+ weatherObject["preppedAlerts"] +
                         '</table></div></div>';
 
@@ -737,11 +743,17 @@ function runWeather (response, directionsDisplay) {
           /*add an event listener to populate and display an infoBox relevant to a weather row in the step by step directions when that row is clicked*/
           (function() {
           var markerHolder = markers[m];
-          $(".weatherRow").eq(m).on('click', function() {
+          $(".weatherRow").eq(m).on({
+            mouseenter: function () {
               ib.setContent(markerHolder.html);
               ib.open(map, markerHolder);
+          },
+          mouseleave: function () {
+            ib.close();
+          }
           });
           }())
+          
       }
          addMarkers(map);//add this marker to the map
          
@@ -786,7 +798,7 @@ function runWeather (response, directionsDisplay) {
           }
         } 
         document.getElementById('spin').removeChild(spinner.el);//remove the spinner to cue user that search is complete
-        $('#barLoader').empty();
+        $('#barLoader').empty();//remove the bar loader to cue user that search is complete
         }, 1);
     }
 }
