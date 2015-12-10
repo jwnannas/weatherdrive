@@ -809,3 +809,5 @@ var autocompleteDestination = new google.maps.places.Autocomplete(document.getEl
 
 /*add the map to the page*/
 google.maps.event.addDomListener(window, 'load', initialize);
+
+/*End of file*/
