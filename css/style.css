@@ -30,7 +30,7 @@ body {
 
 #actionPanel {
 	position: relative;
-	height: 86%;
+	height: 100%;
 	width: 100%;
 }
 
@@ -80,7 +80,7 @@ nav, .navbar {
 /* ==Directions Info Pane== */ 
 #infoPane {
 	height: 100%;
-	padding: 0 5% 6% 0;
+	padding: 0 5% 7% 0;
 	margin-top: 7%;
 }
 
@@ -308,7 +308,7 @@ nav, .navbar {
 	/* ??Main Map?? */
 	#mapColumn {
 		height: 100%;
-		padding: 0 5% 6% 0;
+		padding: 0 5% 7% 0;
 		margin-top: 7%
 	}
 
