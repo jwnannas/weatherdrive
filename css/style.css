@@ -58,6 +58,10 @@ table {
 	color: #F99E28;
 }
 
+#mapButton, #detailButton {
+	visibility: hidden !important;
+}
+
 /* ==Navigation== */
 nav, .navbar {
 	min-width: 320px;
