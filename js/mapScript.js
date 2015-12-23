@@ -144,8 +144,8 @@ document.getElementById('switch').addEventListener('click', switchClick); //add 
 
 /*add event listener to send email with pertinent information when email button is clicked*/
 document.getElementById('email').addEventListener('click', function () {
-    $('#emailModal').modal();//prompt the user to enter the desired send-to email address
-    document.getElementById('emailAddressButton').addEventListener('click', function () {
+	  $('#emailModal').modal();//prompt the user to enter the desired send-to email address
+	  document.getElementById('emailAddressButton').addEventListener('click', function () {
       var email = $('#emailAddress').val();
       if (email != '') { //if an email has been entered
       origin = document.getElementById('origin').value.replace(/ /g,""); //remove spaces from the origin entered in the form and save that value here
@@ -160,9 +160,9 @@ document.getElementById('email').addEventListener('click', function () {
           url:"php/mail.php",
         data: {email: email, weatherDriveURL: emailURL},
         success: function(data) {
-            $('#emailModal').modal('toggle');
-            $('#emailSent').text(email);
-            $('#sentModal').modal();//confirm the message was sent if mail.php successfully completes
+        	  $('#emailModal').hide();
+        	  $('#emailSent').text(email);
+        	  $('#sentModal').modal();//confirm the message was sent if mail.php successfully completes
           }
       });
   }
@@ -177,7 +177,7 @@ document.getElementById('email').addEventListener('click', function () {
  */
 function getDensity (densitySelection, duration) {
   switch (densitySelection) {
-      case 'Forecast frequency'://if no option selected default to medium density
+      case 'Forecast frequency (higher = more time)'://if no option selected default to medium density
           $('#density').val("medium");
           return 5;
       case 'Low':
@@ -206,7 +206,6 @@ function initialize() {
   /*instantiate variables to load direction capability to the map*/
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer({
-      map: map, 
       suppressMarkers: true, //do not show default goole markers
       hideRouteList: true, //do not show default route options returned from Google
     }
@@ -217,7 +216,6 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
     
-    directionsDisplay.setMap(map);
     
   /*add event listener to search to display directions and weather when destinations are entered*/
     var onClick = function() {
@@ -226,9 +224,6 @@ function initialize() {
     };
     
     document.getElementById('search').addEventListener('click', onClick);//add event listener to search button 
-    
-    directionsDisplay.setPanel(document.getElementById('directions'));//set the panel to display the google directions response
-    
     
     /*create radar and traffic buttons and add them to Google Map*/
     var radarButton = document.createElement('div');
@@ -392,7 +387,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
             setRouteOptions(response, directionsDisplay);//add the route options to the page
             runWeather(response, directionsDisplay); //get the weather information for this route
         } else {
-          $('#errorModal').modal();//prompt user with custom modal if invalid place was searched
+        	$('#myModal').modal();//prompt user with custom modal if invalid place was searched
         }
     });
 
@@ -408,6 +403,7 @@ function runWeather (response, directionsDisplay) {
         openBox.close();
       } 
   
+  $('#directions').html("");
   /*add a spinner at beginning of search to visually cue user of activity*/
     var spinner = new Spinner(options).spin();
     document.getElementById('spin').appendChild(spinner.el);
@@ -585,9 +581,18 @@ function runWeather (response, directionsDisplay) {
    *@return void
    */
     function plotWeather(weatherData, directionsDisplay, response, spinner) {
+    map = new google.maps.Map(document.getElementById('map-canvas'));
+    var directionsDisplay = new google.maps.DirectionsRenderer({
+      map: map, 
+      suppressMarkers: true, //do not show default goole markers
+      hideRouteList: true, //do not show default route options returned from Google
+    }
+    );
     $('#routeOptions').removeClass('hideControls');//show the route options
-    directionsDisplay.setDirections(response);//set the directions display to show the directions 
+    directionsDisplay.setPanel(document.getElementById('directions'));
+    directionsDisplay.setDirections(response);//set the directions display to show the directions
     directionsDisplay.setRouteIndex(Number(route));//set the directions to show the selected route index
+
       /*wait for 1 millisecond to ensure that directions are populated on page before parsing them to include corresponding weather information*/
       setTimeout(function(){
       
@@ -743,13 +748,13 @@ function runWeather (response, directionsDisplay) {
           (function() {
           var markerHolder = markers[m];
           $(".weatherRow").eq(m).on({
-            mouseenter: function () {
-              ib.setContent(markerHolder.html);
-              ib.open(map, markerHolder);
-          },
-          mouseleave: function () {
-            ib.close();
-          }
+          	mouseenter: function () {
+            	ib.setContent(markerHolder.html);
+            	ib.open(map, markerHolder);
+        	},
+        	mouseleave: function () {
+        		ib.close();
+        	}
           });
           }())
           
@@ -808,5 +813,3 @@ var autocompleteDestination = new google.maps.places.Autocomplete(document.getEl
 
 /*add the map to the page*/
 google.maps.event.addDomListener(window, 'load', initialize);
-
-/*End of file*/
