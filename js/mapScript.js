@@ -586,9 +586,8 @@ function runWeather (response, directionsDisplay) {
    */
     function plotWeather(weatherData, directionsDisplay, response, spinner) {
     $('#routeOptions').removeClass('hideControls');//show the route options
-    directionsDisplay.setDirections(response);//set the directions display to show the directions
+    directionsDisplay.setDirections(response);//set the directions display to show the directions 
     directionsDisplay.setRouteIndex(Number(route));//set the directions to show the selected route index
-
       /*wait for 1 millisecond to ensure that directions are populated on page before parsing them to include corresponding weather information*/
       setTimeout(function(){
       

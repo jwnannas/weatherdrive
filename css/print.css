@@ -48,6 +48,11 @@ nav, .navbar {
 	display: inline-block;
 }
 
+#mapButton, #detailButton, #errorModal, #emailModal, #sentModal, .tabBottom, .tabTop {
+	display: none !important;
+}
+
+
 /* ==Directions Info Pane== */
 .info thead {
 	display: table-row-group;
