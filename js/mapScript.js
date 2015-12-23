@@ -17,7 +17,6 @@ var openBox; //variable to keep track of which weather infoBox is open
 var passedTime = ""; //variable to keep track of a time passed from the URL, assume not set until checkURL function
 var route = 0; //keep track of what route option is selected, default to the first option
 
-
 /*options passed to the spinner, listed here with comments from the spin.js documentation*/
 var options = {
   lines: 15 // The number of lines to draw
@@ -216,18 +215,9 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
     
-    
-  /*add event listener to search to display directions and weather when destinations are entered*/
-    var onClick = function() {
-      route = 0;
-      calculateAndDisplayRoute(directionsService, directionsDisplay);
-    };
-    
-    document.getElementById('search').addEventListener('click', onClick);//add event listener to search button 
-    
     /*create radar and traffic buttons and add them to Google Map*/
     var radarButton = document.createElement('div');
-    toggleRadar(radarButton);
+    toggleRadar(radarButton, map);
     
     var trafficButton = document.createElement('div');
     toggleTraffic(trafficButton);
@@ -239,6 +229,15 @@ function initialize() {
     
     
     map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonContainer);//add radar and traffic buttons to top right corner of map
+    
+  /*add event listener to search to display directions and weather when destinations are entered*/
+    var onClick = function() {
+      route = 0;
+      calculateAndDisplayRoute(directionsService, directionsDisplay, buttonContainer, map);
+    };
+    
+    document.getElementById('search').addEventListener('click', onClick);//add event listener to search button 
+    
   
     checkURL();//check whether or not a search has been entered in the URL
 
@@ -326,11 +325,11 @@ function initialize() {
    *@param {object} radarDiv - the html element to hold the radar button
    *@return void
    */
-function toggleRadar (radarDiv) {
+function toggleRadar (radarDiv, map) {
   /*prep the API ids for aeris weather radar layer call*/
   aeris.config.setApiId('Uep0dHDwAmi19YagNO9Xd');
   aeris.config.setApiSecret('F5AhwLaQeumUnDYqqgAZbA0HvGnVzcS3EKWDQart');
-  var myAerisMap = new aeris.maps.Map(map); //convert the google map to an aeris map to display radar
+  var myAerisMap = new aeris.maps.Map(this.map); //convert the google map to an aeris map to display radar
     var radar = new aeris.maps.layers.Radar();
     var precip = new aeris.maps.layers.Precip();
     precip.setMap(myAerisMap);//add precipitation to map
@@ -340,6 +339,8 @@ function toggleRadar (radarDiv) {
     precip.setZIndex(-1); //put the precipitation layer behind the radar layer
 
   /*add Radar text to radar buton*/
+  	$(radarDiv).empty();
+  	radarDiv.removeEventListener('click', radarClick);
     var radarText = document.createTextNode("Radar");
       radarDiv.setAttribute('id', 'radar');
       radarDiv.setAttribute('class', 'btn btn-default');
@@ -375,7 +376,7 @@ function toggleRadar (radarDiv) {
  *@param {object} directionsDisplay - the object to handle the display of the google directions service response
  *@return void
  */
-function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+function calculateAndDisplayRoute(directionsService, directionsDisplay, buttonContainer) {
   /*use the Google directions service to calculate from a route from origin to destination*/
   directionsService.route({
       origin: document.getElementById('origin').value,
@@ -385,7 +386,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     }, function(response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
             setRouteOptions(response, directionsDisplay);//add the route options to the page
-            runWeather(response, directionsDisplay); //get the weather information for this route
+            runWeather(response, directionsDisplay, buttonContainer, map); //get the weather information for this route
         } else {
         	$('#myModal').modal();//prompt user with custom modal if invalid place was searched
         }
@@ -397,13 +398,14 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
  *@param {object} directionsDisplay - the object to handle the display of the google directions service response
  *@return void
  */
-function runWeather (response, directionsDisplay) {
+function runWeather (response, directionsDisplay, buttonContainer, map) {
     /*close any open infoBoxes*/
     if (openBox != null) {
         openBox.close();
       } 
   
   $('#directions').html("");
+
   /*add a spinner at beginning of search to visually cue user of activity*/
     var spinner = new Spinner(options).spin();
     document.getElementById('spin').appendChild(spinner.el);
@@ -414,7 +416,7 @@ function runWeather (response, directionsDisplay) {
       var numWeatherPoints = getDensity(document.getElementById('density').options[document.getElementById('density').selectedIndex].text,  Math.round(response.routes[route].legs[0]["duration"].value/3600));//get the number of weather points for this request
         setPrintInformation(response);//add directions information for this search specifically for print styles
         weatherLocations = buildLocationsArray(response, numWeatherPoints);//get the locations associated with the number of weather points along route
-        getWeather(weatherLocations, spinner, directionsDisplay, response);//get the weather associated with each point on route
+        getWeather(weatherLocations, spinner, directionsDisplay, response, buttonContainer);//get the weather associated with each point on route
 }
 
  /**
@@ -560,14 +562,14 @@ function runWeather (response, directionsDisplay) {
    *@param {object} response - the Google directions response
    *@return void
    */
-  function getWeather (array, spinner, directionsDisplay, response) {
+  function getWeather (array, spinner, directionsDisplay, response, buttonContainer) {
       $.ajax({
           type: "POST",
           url:"php/weather.php",
           data: {array: array},
           success: function(data) {
             var weather = data;
-            plotWeather(weather, directionsDisplay, response, spinner);
+            plotWeather(weather, directionsDisplay, response, spinner, buttonContainer);
           }
       });
     }
@@ -580,8 +582,12 @@ function runWeather (response, directionsDisplay) {
    *@param {object} spinner - a spin.js object that is currently spinning on the page
    *@return void
    */
-    function plotWeather(weatherData, directionsDisplay, response, spinner) {
-    map = new google.maps.Map(document.getElementById('map-canvas'));
+    function plotWeather(weatherData, directionsDisplay, response, spinner, buttonContainer) {
+      var mapOptions = {
+      center: { lat: 42.37469, lng: -71.12085},//center the map on Cambridge, MA
+      zoom: 12,
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     var directionsDisplay = new google.maps.DirectionsRenderer({
       map: map, 
       suppressMarkers: true, //do not show default goole markers
@@ -592,10 +598,20 @@ function runWeather (response, directionsDisplay) {
     directionsDisplay.setPanel(document.getElementById('directions'));
     directionsDisplay.setDirections(response);//set the directions display to show the directions
     directionsDisplay.setRouteIndex(Number(route));//set the directions to show the selected route index
-
+    
       /*wait for 1 millisecond to ensure that directions are populated on page before parsing them to include corresponding weather information*/
       setTimeout(function(){
-      
+	var radarButton = document.createElement('div');
+    toggleRadar(radarButton, map);
+    
+    var trafficButton = document.createElement('div');
+    toggleTraffic(trafficButton);
+    
+    var buttonContainer = document.createElement('div'); //container to hold traffic and radar buttons so they can be added in a styled fashion
+    buttonContainer.setAttribute('id', 'buttonContainer');
+    buttonContainer.appendChild(trafficButton);
+    buttonContainer.appendChild(radarButton);
+map.controls[google.maps.ControlPosition.TOP_RIGHT].push(buttonContainer);
       //add markers to the map
       function addMarkers(map) {
           for (var i = 0; i < markers.length; i++) {
